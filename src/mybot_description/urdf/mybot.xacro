@@ -8,6 +8,11 @@
   <xacro:include filename="$(find mybot_description)/urdf/materials.xacro" />
   <xacro:include filename="$(find mybot_description)/urdf/macros.xacro" />
 
+  <xacro:property name="cameraSize" value="0.05"/>
+  <xacro:property name="cameraMass" value="0.1"/>
+  <xacro:property name="irSize" value="0.02"/>
+  <xacro:property name="irMass" value="0.01"/>
+
 
   <link name='chassis'>
     <pose>0 0 0.1 0 0 0</pose>
@@ -33,10 +38,34 @@
       <geometry>
         <box size=".4 .2 .1"/>
       </geometry>
+    </visual>    
+  </link>
+
+
+  
+  <link name="tower">
+    <collision name='tower_collision'>
+      <origin xyz="0 0 0.2" rpy="0 0 0" />
+      <geometry>
+	<cylinder radius="0.1" length="0.483" />
+      </geometry>
+    </collision>
+    <visual name='tower_visual'>
+      <origin xyz="0 0 0.2" rpy=" 0 0 0"/>
+      <geometry>
+	<cylinder radius="0.1" length="0.483" />
+      </geometry>
     </visual>
+  </link>
 
+  <joint name="tower_joint" type="fixed">
+     <child link="tower"/>
+     <parent link="chassis"/>
+  </joint>
+  
 
-    <collision name='caster_collision'>
+  <link name='caster_wheel'>
+    <collision name='collision'>
       <origin xyz="-0.15 0 -0.05" rpy=" 0 0 0"/>
       <geometry>
         <sphere radius="0.05"/>
@@ -52,7 +81,6 @@
         </friction>
       </surface>
     </collision>
-
     <visual name='caster_visual'>
       <origin xyz="-0.15 0 -0.05" rpy=" 0 0 0"/>
       <geometry>
@@ -61,7 +89,13 @@
     </visual>
   </link>
 
+  <joint name='caster_joint' type='fixed'>
+    <child link='caster_wheel'/>
+    <parent link='chassis'/>
+    <axis xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
 
+  
   <link name="left_wheel">
     <!--origin xyz="0.1 0.13 0.1" rpy="0 1.5707 1.5707"/-->
     <collision name="collision">
@@ -132,6 +166,717 @@
   </joint>
 
 
+  <link name="camera">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
+      </geometry>
+      <material name="green"/>
+    </visual>
+
+    <inertial>
+      <mass value="${cameraMass}" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <box_inertia m="${cameraMass}" x="${cameraSize}" y="${cameraSize}" z="${cameraSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+  <joint name="camera_joint" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz=".2 0 0" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="camera"/>
+  </joint>
 
 
+
+  <link name="ir1">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir1_joint" type="fixed">
+    <origin xyz="0.1 0 0.380" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="ir1"/>
+  </joint>
+
+
+  <link name="ir2">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir2_joint" type="fixed">
+    <origin xyz="0.097 -0.026 0.380" rpy="0 0 -0.26"/>
+    <parent link="chassis"/>
+    <child link="ir2"/>
+  </joint>
+
+
+   <link name="ir3">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir3_joint" type="fixed">
+    <origin xyz="0.087 -0.05 0.380" rpy="0 0 -0.52"/>
+    <parent link="chassis"/>
+    <child link="ir3"/>
+  </joint>
+
+  <link name="ir4">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir4_joint" type="fixed">
+    <origin xyz="0.0707 -0.0707 0.380" rpy="0 0 -0.78"/>
+    <parent link="chassis"/>
+    <child link="ir4"/>
+  </joint>
+
+  <link name="ir5">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir5_joint" type="fixed">
+    <origin xyz="0.05 -0.087 0.380" rpy="0 0 -1.04"/>
+    <parent link="chassis"/>
+    <child link="ir5"/>
+  </joint>
+
+
+  <link name="ir6">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir6_joint" type="fixed">
+    <origin xyz="0.026 -0.097 0.380" rpy="0 0 -1.30"/>
+    <parent link="chassis"/>
+    <child link="ir6"/>
+  </joint>
+
+  <link name="ir7">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir7_joint" type="fixed">
+    <origin xyz="0 -0.1 0.380" rpy="0 0 -1.56"/>
+    <parent link="chassis"/>
+    <child link="ir7"/>
+  </joint>
+
+  <link name="ir8">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir8_joint" type="fixed">
+    <origin xyz="-0.026 -0.097 0.380" rpy="0 0 -1.82"/>
+    <parent link="chassis"/>
+    <child link="ir8"/>
+  </joint>
+
+  <link name="ir9">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir9_joint" type="fixed">
+    <origin xyz="-0.05 -0.087 0.380" rpy="0 0 -2.08"/>
+    <parent link="chassis"/>
+    <child link="ir9"/>
+  </joint>
+
+  <link name="ir10">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir10_joint" type="fixed">
+    <origin xyz="-0.0707 -0.0707 0.380" rpy="0 0 -2.34"/>
+    <parent link="chassis"/>
+    <child link="ir10"/>
+  </joint>
+
+  <link name="ir11">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir11_joint" type="fixed">
+    <origin xyz="-0.087 -0.05 0.380" rpy="0 0 -2.60"/>
+    <parent link="chassis"/>
+    <child link="ir11"/>
+  </joint>
+
+
+  <link name="ir12">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir12_joint" type="fixed">
+    <origin xyz="-0.097 -0.026 0.380" rpy="0 0 -2.86"/>
+    <parent link="chassis"/>
+    <child link="ir12"/>
+  </joint>
+
+  <link name="ir13">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir13_joint" type="fixed">
+    <origin xyz="-0.1 0 0.380" rpy="0 0 -3.12"/>
+    <parent link="chassis"/>
+    <child link="ir13"/>
+  </joint>
+
+  <link name="ir14">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir14_joint" type="fixed">
+    <origin xyz="-0.097 0.026 0.380" rpy="0 0 -3.38"/>
+    <parent link="chassis"/>
+    <child link="ir14"/>
+  </joint>
+
+
+   <link name="ir15">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir15_joint" type="fixed">
+    <origin xyz="-0.087 0.05 0.380" rpy="0 0 -3.64"/>
+    <parent link="chassis"/>
+    <child link="ir15"/>
+  </joint>
+
+  <link name="ir16">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir16_joint" type="fixed">
+    <origin xyz="-0.0707 0.0707 0.380" rpy="0 0 -3.90"/>
+    <parent link="chassis"/>
+    <child link="ir16"/>
+  </joint>
+
+  <link name="ir17">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir17_joint" type="fixed">
+    <origin xyz="-0.05 0.087 0.380" rpy="0 0 -4.16"/>
+    <parent link="chassis"/>
+    <child link="ir17"/>
+  </joint>
+
+
+  <link name="ir18">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir18_joint" type="fixed">
+    <origin xyz="-0.026 0.097 0.380" rpy="0 0 -4.42"/>
+    <parent link="chassis"/>
+    <child link="ir18"/>
+  </joint>
+
+  <link name="ir19">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir19_joint" type="fixed">
+    <origin xyz="0 0.1 0.380" rpy="0 0 -4.68"/>
+    <parent link="chassis"/>
+    <child link="ir19"/>
+  </joint>
+
+
+  <link name="ir20">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir20_joint" type="fixed">
+    <origin xyz="0.026 0.097 0.380" rpy="0 0 -4.94"/>
+    <parent link="chassis"/>
+    <child link="ir20"/>
+  </joint>
+
+  <link name="ir21">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir21_joint" type="fixed">
+    <origin xyz="0.05 0.087 0.380" rpy="0 0 -5.20"/>
+    <parent link="chassis"/>
+    <child link="ir21"/>
+  </joint>
+
+  <link name="ir22">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir22_joint" type="fixed">
+    <origin xyz="0.0707 0.0707 0.380" rpy="0 0 -5.46"/>
+    <parent link="chassis"/>
+    <child link="ir22"/>
+  </joint>
+
+  <link name="ir23">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir23_joint" type="fixed">
+    <origin xyz="0.087 0.05 0.380" rpy="0 0 -5.72"/>
+    <parent link="chassis"/>
+    <child link="ir23"/>
+  </joint>
+
+  <link name="ir24">
+    <collision>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${irSize} ${irSize} ${irSize}"/>
+      </geometry>
+    </visual>
+
+    <inertial>
+      <mass value="${irMass}" />
+      <origin xyz="0.0 0 0.0" rpy="0 0 0"/>
+      <box_inertia m="${irMass}" x="${irSize}" y="${irSize}" z="${irSize}" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  <joint name="ir24_joint" type="fixed">
+    <origin xyz="0.097 0.026 0.380" rpy="0 0 -5.98"/>
+    <parent link="chassis"/>
+    <child link="ir24"/>
+  </joint>
+  
+    
 </robot>
