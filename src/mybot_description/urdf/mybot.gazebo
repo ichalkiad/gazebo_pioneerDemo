@@ -80,17 +80,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir1</frameName>
 	<topicName>mybot/ir1_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -101,17 +101,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir2</frameName>
 	<topicName>mybot/ir2_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -121,17 +121,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir3</frameName>
 	<topicName>mybot/ir3_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -141,17 +141,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir4</frameName>
 	<topicName>mybot/ir4_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -161,17 +161,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir5</frameName>
 	<topicName>mybot/ir5_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -181,17 +181,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir6</frameName>
 	<topicName>mybot/ir6_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -201,17 +201,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir7</frameName>
 	<topicName>mybot/ir7_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -221,17 +221,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir8</frameName>
 	<topicName>mybot/ir8_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -241,17 +241,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir9</frameName>
 	<topicName>mybot/ir9_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -261,17 +261,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir10</frameName>
 	<topicName>mybot/ir10_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -281,17 +281,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir11</frameName>
 	<topicName>mybot/ir11_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -301,17 +301,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir12</frameName>
 	<topicName>mybot/ir12_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -321,17 +321,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir13</frameName>
 	<topicName>mybot/ir13_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -341,17 +341,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir14</frameName>
 	<topicName>mybot/ir14_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -361,17 +361,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir14</frameName>
 	<topicName>mybot/ir14_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -381,17 +381,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir15</frameName>
 	<topicName>mybot/ir15_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -401,17 +401,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir16</frameName>
 	<topicName>mybot/ir16_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -421,17 +421,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir17</frameName>
 	<topicName>mybot/ir17_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -441,17 +441,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir18</frameName>
 	<topicName>mybot/ir18_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -461,17 +461,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir19</frameName>
 	<topicName>mybot/ir19_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -481,17 +481,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir20</frameName>
 	<topicName>mybot/ir20_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -501,17 +501,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir21</frameName>
 	<topicName>mybot/ir21_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -521,17 +521,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir22</frameName>
 	<topicName>mybot/ir22_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -541,17 +541,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir23</frameName>
 	<topicName>mybot/ir23_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
@@ -561,17 +561,17 @@
       <visualize>true</visualize>
       <ray>
 	<range>
-	  <min>0.15</min>
-	  <max>15</max>
+	  <min>0.02</min>
+	  <max>4</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
 	<frameName>ir24</frameName>
 	<topicName>mybot/ir24_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>1.0</updateRate>
-	<fov>0.2</fov>
-	<gaussianNoise>1.0</gaussianNoise>
+        <updateRate>9.0</updateRate>
+	<fov>0.26</fov>
+	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
     </sensor>
   </gazebo>
