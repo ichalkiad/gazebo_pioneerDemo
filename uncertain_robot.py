@@ -31,26 +31,29 @@ def create_and_load_model():
 
     filename = '/tmp/compressed_model_weights.h5'
     f = h5py.File(filename, 'r')
-    # Keys: ['concrete_dropout_1', 'concrete_dropout_2', 'input_1']
+    # Keys: ['concrete_dropout_44', 'concrete_dropout_43', 'input_22']
     print(list(f))
-    group1 = f['concrete_dropout_1']
-    for key in group1.keys():
-        print(key)
-        for key2 in group1[key].keys():
-            print(group1[key][key2].value)  #DATA ARE HERE! USE set_weights when creating layers to load weights!
+    group1 = f['concrete_dropout_43']['concrete_dropout_43']
+    b1 = group1['bias'].value
+    w1 = group1['kernel'].value
+    p_logit1 = group1['p_logit'].value
+    group2 = f['concrete_dropout_44']['concrete_dropout_44']
+    b2 = group2['bias'].value
+    w2 = group2['kernel'].value
+    p_logit2 = group2['p_logit'].value
+
     
     inp = Input(shape=(Q,))
     x = inp
-    x = Dense(nb_features, activation='relu',name='CD1')(x)
-    x = Dropout(p[0])(x)
-    x = Dense(nb_out, activation='sigmoid',name='CD2')(x)
-    x = Dropout(p[1])(x)
+    x = Dense(nb_features, activation='relu',weights=[w1,b1],name='CD1')(x)
+    x = Dropout(np.exp(p_logit1)/(1+np.exp(p_logit1)))(x,training=True)
+    x = Dense(nb_out, activation='sigmoid',weights=[w2,b2],name='CD2')(x)
+    x = Dropout(np.exp(p_logit2)/(1+np.exp(p_logit2)))(x,training=True)
     out = x
     model = Model(inp,out)
     model._make_predict_function()
 
-    #print(model.get_weights()[-2])
-    
+        
     return model
 
 
@@ -63,12 +66,12 @@ def uncertain_predict(model,X,K_test):
     MC_means = np.sum(MC_samples,axis=0)/float(k)
     MC_pred = np.argmax(MC_means,axis=-1) 
     
-    means = np.zeros((MC_means.shape[0],))  
-    means_sq = np.zeros((MC_means.shape[0],))  
+    means = np.zeros((MC_samples.shape[1],))  
     means[:] = MC_means[:,0]*0 + MC_means[:,1]*1 + MC_means[:,2]*2 + MC_means[:,3]*3
-    means_sq[:] = MC_means[:,0]*(0**2) + MC_means[:,1]*(1**2) + MC_means[:,2]*(2**2) + MC_means[:,3]*(3**2)
-    vars = np.zeros((MC_means.shape[0],))  
-    vars[:] = means_sq[:] - means[:]**2
+    vars = np.zeros((MC_samples.shape[1],))  
+    for q in xrange(MC_samples.shape[1]):
+        vars[q] = ((0-means[q])**2)*MC_means[q,0]+((1-means[q])**2)*MC_means[q,1]+((2-means[q])**2)*MC_means[q,2]+((3-means[q])**2)*MC_means[q,3]
+        
     epistemic_uncertainty = vars.mean(0)
 
     return MC_pred, vars, epistemic_uncertainty
