@@ -3,15 +3,17 @@
 
 
   <gazebo>
-    <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+    <plugin name="skid_drive_controller" filename="libgazebo_ros_skid_steer_drive.so">
       <legacyMode>false</legacyMode>
       <alwaysOn>true</alwaysOn>
       <updateRate>20</updateRate>
-      <leftJoint>left_wheel_hinge</leftJoint>
-      <rightJoint>right_wheel_hinge</rightJoint>
+      <leftFrontJoint>left_wheel_hinge</leftFrontJoint>
+      <rightFrontJoint>right_wheel_hinge</rightFrontJoint>
+      <leftRearJoint>back_left_wheel_hinge</leftRearJoint>
+      <rightRearJoint>back_right_wheel_hinge</rightRearJoint>
       <wheelSeparation>0.4</wheelSeparation>
       <wheelDiameter>0.1</wheelDiameter>
-      <torque>20</torque>
+      <torque>10</torque>
       <commandTopic>cmd_vel</commandTopic>
       <odometryTopic>odom</odometryTopic>
       <odometryFrame>odom</odometryFrame>
@@ -19,9 +21,10 @@
     </plugin>
   </gazebo>
 
+  
   <gazebo reference="chassis">
       <material>Gazebo/Orange</material>
-  </gazebo>
+  </gazebo> 
 
   <gazebo reference="left_wheel">
       <material>Gazebo/Black</material>
@@ -31,18 +34,23 @@
       <material>Gazebo/Black</material>
   </gazebo>
 
-  <gazebo reference="caster_wheel">
+  <gazebo reference="back_left_wheel">
       <material>Gazebo/Black</material>
   </gazebo>
 
-  <gazebo reference="tower">
-      <material>Gazebo/Orange</material>
+  <gazebo reference="back_right_wheel">
+      <material>Gazebo/Black</material>
   </gazebo>
 
   
+  <gazebo reference="tower">
+      <material>Gazebo/Orange</material>
+  </gazebo>
+  
   <gazebo reference="camera">
     <material>Gazebo/Green</material>
-    <sensor type="camera" name="camera1">
+  </gazebo>
+  <!--  <sensor type="camera" name="camera1">
       <update_rate>30.0</update_rate>
       <camera name="head">
         <horizontal_fov>1.3962634</horizontal_fov>
@@ -71,7 +79,7 @@
         <distortionT2>0.0</distortionT2>
       </plugin>
     </sensor>
-  </gazebo>
+  </gazebo-->
 
 
   <gazebo reference="ir1">
@@ -88,7 +96,7 @@
 	<frameName>ir1</frameName>
 	<topicName>mybot/ir1_pub</topicName>
 	<radiation>ultrasound</radiation>
-        <updateRate>9.0</updateRate>
+        <updateRate>9.0</updateRate>         <!-- 40???? -->
 	<fov>0.26</fov>
 	<gaussianNoise>0.005</gaussianNoise>
       </plugin>
