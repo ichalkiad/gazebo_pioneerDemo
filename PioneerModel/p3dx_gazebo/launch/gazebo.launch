@@ -28,6 +28,11 @@
 	<node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
 		respawn="false" output="screen" args="-urdf -model p3dx -param robot_description" />
 
+	<!-- Rosbridge -->
+	<include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" > 
+	     <arg name="port" value="9090"/>
+	</include>
+
 	<!-- ros_control p3rd launch file -->
 	<!-- <include file="$(find p3dx_control)/launch/control.launch" /> -->
 
