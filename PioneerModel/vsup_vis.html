@@ -110,26 +110,48 @@
         var squareQuantization = vsup.squareQuantization().n(4).valueDomain(vDom).uncertaintyDomain(uDom);
         var squareScale = vsup.scale().quantize(squareQuantization).range(d3.interpolateViridis);
 
+        var simpleScale = d3.scaleQuantize().domain([0, 1]).range(d3.quantize(d3.interpolateViridis, 4));
         var body = d3.select("body");
-        makeVSUP(body.append("svg"), scale, data, "arc");
-        
-      });
 
-      function makeVSUP(svg, scale, data, type) {
         var w = 640;
         var h = 240;
+      
+        makeVSUP(body.append("svg"), w, h, scale, simpleScale, data, "simple");
+         
+      });
+
+      function makeLegend(svg, w, scale, data, type) {
+
+        var legend = vsup.legend.simpleLegend();
+  
+        legend
+          .scale(scale)
+          .size(160)
+          .height(40)
+          .x(w + 120)
+          .y(60)
+          .title("Danger of collision");
+      
+        svg.append("g").call(legend)
+      }
+      
+      function makeVSUP(svg, w, h, scale, simpleScale, data, type) {
 
         var x = d3.scaleBand().range([0, w]).domain(data.map(function(d) { return d.Direction; }));
         var y = d3.scaleBand().range([0, h]).domain(data.map(function(d) { return d.Uncertainty; }));
 
-        
       
+       
+        var x = d3.scaleBand().range([0, w]).domain(data.map(function(d) { return d.Direction; }));
+        var y = d3.scaleBand().range([0, h]).domain(data.map(function(d) { return d.Uncertainty; }));
+
+              
         // special scales for axes
         var xAxis = d3.scalePoint().range([0, w]).domain(["Slight-Turn-Right","Sharp-Turn-Right","Move-Forward","Slight-Turn-Left"]);
         var yAxis = d3.scaleBand().range([0, h]).domain([0,1]);
 
         var heatmap = svg.attr("width", w + 350).attr("height", h + 60).append("g")
-          .attr("transform", "translate(10,10)");
+                         .attr("transform", "translate(10,10)");
 
         heatmap.selectAll("rect")
           .data(data)
@@ -142,10 +164,12 @@
           .attr("title", JSON.stringify)
           .attr("fill", function(d) { return scale(d.Direction, d.Uncertainty); });
 
+         
+
         // axes
         heatmap.append("g")
-          .attr("transform", "translate(0," + h + ")")
-          .call(d3.axisBottom(xAxis));
+               .attr("transform", "translate(0," + h + ")")
+               .call(d3.axisBottom(xAxis));
 
         heatmap.append("text")
           .style("text-anchor", "middle")
@@ -154,31 +178,19 @@
           .text("Command")
 
         heatmap.append("g")
-          .attr("transform", "translate(" + w + ", 0)")
-          .call(d3.axisRight(yAxis));
+               .attr("transform", "translate(" + w + ", 0)")
+               .call(d3.axisRight(yAxis));
 
         heatmap.append("text")
-          .style("text-anchor", "middle")
-          .style("font-size", 13)
-          .attr("transform", "translate(" + (w + 80) + ", " + (h / 2) + ")rotate(90)")
-          .text("Danger of collision");
-
-        // legend
-        var legend = type === "arc" ? vsup.legend.arcmapLegend() : vsup.legend.heatmapLegend();
-
-        legend
-          .scale(scale)
-          .size(160)
-          .x(w + 160)
-          .y(60)
-          .vtitle("Command")
-          .utitle("Variance");
-
-      svg.append("g").call(legend)
-
+               .style("text-anchor", "middle")
+               .style("font-size", 13)
+               .attr("transform", "translate(" + (w + 80) + ", " + (h / 2) + ")rotate(90)")
+               .text("Danger of collision");
+   
       
-      
+        makeLegend(svg, w, simpleScale, data, "simple");
       }
+
     </script>
     </div>
 
