@@ -2,10 +2,16 @@
 <html>
 <head>
 <meta charset="utf-8" />
+
+
 <script src="https://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
 <script type="text/javascript" src="https://static.robotwebtools.org/roslibjs/current/roslib.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/d3@5"></script>
+//<script src="https://cdn.jsdelivr.net/npm/d3@5"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vsup@latest"></script>
+
+
 
 <style>
     body {
@@ -63,6 +69,7 @@
   });
 
 </script>
+<link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
@@ -114,7 +121,7 @@
         var body = d3.select("body");
 
         var w = 640;
-        var h = 240;
+        var h = 540;
       
         makeVSUP(body.append("svg"), w, h, scale, simpleScale, data, "simple");
          
@@ -122,16 +129,25 @@
 
       function makeLegend(svg, w, scale, data, type) {
 
-        var legend = vsup.legend.simpleLegend();
-  
-        legend
-          .scale(scale)
-          .size(160)
-          .height(40)
-          .x(w + 120)
-          .y(60)
-          .title("Danger of collision");
-      
+        var legend = type === "arc" ? vsup.legend.arcmapLegend() : vsup.legend.simpleLegend();
+
+        if (type==="arc") {
+            legend
+                .scale(scale)
+                .size(160)
+                .x(w + 140)
+                .y(220)
+                .vtitle("Direction")
+                .utitle("Danger of collision");
+        } else {
+             legend
+                .scale(scale)
+                .size(160)
+                .height(40)
+                .x(w + 120)
+                .y(60)
+                .title("Danger of collision");
+        }
         svg.append("g").call(legend)
       }
       
@@ -189,11 +205,12 @@
    
       
         makeLegend(svg, w, simpleScale, data, "simple");
+        makeLegend(svg, w, scale, data, "arc");
       }
 
     </script>
     </div>
-
+    <div><script src="draw.js" ></script></div>
 
   
 </body>
