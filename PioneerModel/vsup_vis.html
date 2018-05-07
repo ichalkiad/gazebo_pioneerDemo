@@ -6,12 +6,8 @@
 
 <script src="https://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
 <script type="text/javascript" src="https://static.robotwebtools.org/roslibjs/current/roslib.js"></script>
-//<script src="https://cdn.jsdelivr.net/npm/d3@5"></script>
-<script src="http://d3js.org/d3.v3.min.js"></script>
-<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vsup@latest"></script>
-
-
 
 <style>
     body {
@@ -60,9 +56,16 @@
     messageType : 'p3dx_description/UncertainMsg'
   });
 
+  var msg = [];
   // Callback to be called every time a message is published on this topic.
-    listener.subscribe(function(message) {
-    console.log('Received message on ' + listener.name + ': ' + message.UncertainList[0]);
+  listener.subscribe(function(message) {
+  console.log('Received message on ' + listener.name + ': ' + message.UncertainList);
+        msg = [];
+        msg[0] = message.UncertainList[0];
+        msg[1] = message.UncertainList[1];
+        msg[2] = message.UncertainList[2];
+  msg[3] = message.UncertainList[3];
+  console.log(msg)
 
     // If desired, we can unsubscribe from the topic as well.
     //listener.unsubscribe();
@@ -99,18 +102,36 @@
   </div>
 
   <div>
-  <script>
-      d3.csv("test.csv").then(function(data) {
+    <script>
+ 
+      d3.csv("aster_data.csv").then(function(data) {
+
         data = data.map(function(d) {
-          return {
-            Direction: +d.Direction,
-            Uncertainty: +d.Uncertainty
-          }
-        });
-        
+           return  {
+                 id : d.id,
+                 Direction : +d.score,
+                 Uncertainty : +d.weight,
+                 startAngle : +d.startAngle,
+                 endAngle : +d.endAngle,
+                 label : d.label
+                 }
+            });
+
+      
+   
+        var id   = d3.extent(data.map(function(d) { return d.id; }));
+        var sAngle   = d3.extent(data.map(function(d) { return d.startAngle; }));
+        var eAngle   = d3.extent(data.map(function(d) { return d.endAngle; }));
+
         var vDom = d3.extent(data.map(function(d) { return d.Direction; }));
         var uDom = d3.extent(data.map(function(d) { return d.Uncertainty; }));
-      
+
+        uDom[0] = msg[0];      
+        uDom[1] = msg[1];      
+        uDom[2] = msg[2];      
+        uDom[3] = msg[3];      
+        console.log(uDom[0]);
+
         var quantization = vsup.quantization().branching(2).layers(3).valueDomain(vDom).uncertaintyDomain(uDom);
         var scale = vsup.scale().quantize(quantization).range(d3.interpolateViridis);
 
@@ -120,12 +141,71 @@
         var simpleScale = d3.scaleQuantize().domain([0, 1]).range(d3.quantize(d3.interpolateViridis, 4));
         var body = d3.select("body");
 
-        var w = 640;
-        var h = 540;
+        var w = 860;
+        var h = 440;
+        radius = Math.min(w, h) / 2,
+        innerRadius = 0.2 * radius;
+
+     
       
-        makeVSUP(body.append("svg"), w, h, scale, simpleScale, data, "simple");
-         
+        makeVSUP(body.append("svg"), w, h, scale, simpleScale, data, "arc");
+
       });
+
+
+      function makeVSUP(svg, w, h, scale, simpleScale, data, type) {
+                 
+        var pie = d3.pie()
+                    .sort(null)
+                    .value(function(d) { return d.Uncertainty; } );
+
+        var arc = d3.arc()
+                        .innerRadius(innerRadius)
+                        .outerRadius(function (d) { 
+                            return (radius - innerRadius) * d.data.Uncertainty + innerRadius; 
+                        })
+                        .startAngle(function(d) { return d.data.startAngle; })
+                        .endAngle(function(d) { return d.data.endAngle; });
+
+
+
+        var svg = d3.select("body").append("svg")
+                                   .attr("width", w)
+                                   .attr("height", h)
+                                   .append("g")
+                                   .attr("transform", "translate(5,150)");
+
+      
+              
+        
+        var arcEnter = svg.selectAll(".solidArc")
+            .data(pie(data))
+            .enter().append("g")
+            .classed("solidArc", true)
+            .attr("transform", "translate(200,50)");
+
+        arcEnter.append("path")
+            .attr("fill", function(d) { return scale(d.data.Direction, d.data.Uncertainty); })
+            .attr("id", function(d) { return d.data.id; })
+            .attr("stroke", "gray")
+            .attr("d", arc);
+
+
+        /*
+        arcEnter.append("text")
+                .style("font-size", 13)
+                .style("text-anchor", "middle")
+                .attr("y", -10)
+                .attr("xlink:href", function(d){return d.data.id;}) 
+                .text(function(d) {return d.data.label;})
+                .attr("transform", function(d) {
+                        return "rotate(0.7)translate(0,0)"});
+        */
+      
+       makeLegend(svg, w, scale, data, type);        
+     
+      
+      }
 
       function makeLegend(svg, w, scale, data, type) {
 
@@ -135,8 +215,8 @@
             legend
                 .scale(scale)
                 .size(160)
-                .x(w + 140)
-                .y(220)
+                .x(500)
+                .y(-40)
                 .vtitle("Direction")
                 .utitle("Danger of collision");
         } else {
@@ -144,74 +224,17 @@
                 .scale(scale)
                 .size(160)
                 .height(40)
-                .x(w + 120)
+                .x(150)
                 .y(60)
                 .title("Danger of collision");
         }
         svg.append("g").call(legend)
       }
       
-      function makeVSUP(svg, w, h, scale, simpleScale, data, type) {
-
-        var x = d3.scaleBand().range([0, w]).domain(data.map(function(d) { return d.Direction; }));
-        var y = d3.scaleBand().range([0, h]).domain(data.map(function(d) { return d.Uncertainty; }));
-
-      
-       
-        var x = d3.scaleBand().range([0, w]).domain(data.map(function(d) { return d.Direction; }));
-        var y = d3.scaleBand().range([0, h]).domain(data.map(function(d) { return d.Uncertainty; }));
-
-              
-        // special scales for axes
-        var xAxis = d3.scalePoint().range([0, w]).domain(["Slight-Turn-Right","Sharp-Turn-Right","Move-Forward","Slight-Turn-Left"]);
-        var yAxis = d3.scaleBand().range([0, h]).domain([0,1]);
-
-        var heatmap = svg.attr("width", w + 350).attr("height", h + 60).append("g")
-                         .attr("transform", "translate(10,10)");
-
-        heatmap.selectAll("rect")
-          .data(data)
-          .enter()
-          .append("rect")
-          .attr("x", function(d) { return x(d.Direction); })
-          .attr("y", function(d) { return y(d.Uncertainty); })
-          .attr("width", x.bandwidth())
-          .attr("height", y.bandwidth())
-          .attr("title", JSON.stringify)
-          .attr("fill", function(d) { return scale(d.Direction, d.Uncertainty); });
-
-         
-
-        // axes
-        heatmap.append("g")
-               .attr("transform", "translate(0," + h + ")")
-               .call(d3.axisBottom(xAxis));
-
-        heatmap.append("text")
-          .style("text-anchor", "middle")
-          .style("font-size", 13)
-          .attr("transform", "translate(" + (w / 2) + ", " + (h + 40) + ")")
-          .text("Command")
-
-        heatmap.append("g")
-               .attr("transform", "translate(" + w + ", 0)")
-               .call(d3.axisRight(yAxis));
-
-        heatmap.append("text")
-               .style("text-anchor", "middle")
-               .style("font-size", 13)
-               .attr("transform", "translate(" + (w + 80) + ", " + (h / 2) + ")rotate(90)")
-               .text("Danger of collision");
-   
-      
-        makeLegend(svg, w, simpleScale, data, "simple");
-        makeLegend(svg, w, scale, data, "arc");
-      }
+        
 
     </script>
     </div>
-    <div><script src="draw.js" ></script></div>
-
   
 </body>
 </html>
