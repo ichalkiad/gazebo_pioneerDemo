@@ -162,7 +162,7 @@ if __name__ == '__main__':
      
      IR_listener()
      pub = rospy.Publisher('uncertain', UncertainMsg, queue_size=1)
-     rate = rospy.Rate(1)
+     rate = rospy.Rate(0.5)
      
      while not rospy.is_shutdown():
  
