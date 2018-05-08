@@ -57,81 +57,34 @@
   });
 
   var msg = [];
-  // Callback to be called every time a message is published on this topic.
-  listener.subscribe(function(message) {
-  console.log('Received message on ' + listener.name + ': ' + message.UncertainList);
-        msg = [];
-        msg[0] = message.UncertainList[0];
-        msg[1] = message.UncertainList[1];
-        msg[2] = message.UncertainList[2];
-  msg[3] = message.UncertainList[3];
-  console.log(msg)
+  var data = [
+              {"Direction":3,"Uncertainty":0.25,"startAngle":-0.78,"endAngle":-0.26,"id":"L","label":"Left"},
+              {"Direction":2,"Uncertainty":0.25,"startAngle":-0.26,"endAngle":0.26,"id":"F","label":"Forward"},
+              {"Direction":0,"Uncertainty":0.25,"startAngle":0.26,"endAngle":0.78,"id":"SR","label":"SL right"},
+              {"Direction":1,"Uncertainty":0.25,"startAngle":0.78,"endAngle":1.30,"id":"R","label":"Right"}
+  ];
+  //-------------------------------------------
 
-    // If desired, we can unsubscribe from the topic as well.
-    //listener.unsubscribe();
-  });
+  function visualize_vsup(msg,data) {
+  
+        var id     = data.map(function(d) { return d.id; });
+        var sAngle = data.map(function(d) { return d.startAngle; });
+        var eAngle = data.map(function(d) { return d.endAngle; });
 
-</script>
-<link rel="stylesheet" type="text/css" href="style.css">
-</head>
-
-<body>
-  <h1>Simple roslib Example</h1>
-  <p>Run the following commands in the terminal then refresh this page. Check the JavaScript
-    console for the output.</p>
-  <ol>
-    <li><tt>roscore</tt></li>
-    <li><tt>rostopic pub /listener std_msgs/String "Hello, World"</tt></li>
-    <li><tt>rostopic echo /cmd_vel</tt></li>
-    <li><tt>rosrun rospy_tutorials add_two_ints_server</tt></li>
-    <li><tt>roslaunch rosbridge_server rosbridge_websocket.launch</tt></li>
-  </ol>
-  <div id="statusIndicator">
-    <p id="connecting">
-      Connecting to rosbridge...
-    </p>
-    <p id="connected" style="color:#00D600; display:none">
-      Connected
-    </p>
-    <p id="error" style="color:#FF0000; display:none">
-      Error in the backend!
-    </p>
-    <p id="closed" style="display:none">
-      Connection closed.
-    </p>
-  </div>
-
-  <div>
-    <script>
- 
-      d3.csv("aster_data.csv").then(function(data) {
-
-        data = data.map(function(d) {
-           return  {
-                 id : d.id,
-                 Direction : +d.score,
-                 Uncertainty : +d.weight,
-                 startAngle : +d.startAngle,
-                 endAngle : +d.endAngle,
-                 label : d.label
-                 }
-            });
-
-      
-   
-        var id   = d3.extent(data.map(function(d) { return d.id; }));
-        var sAngle   = d3.extent(data.map(function(d) { return d.startAngle; }));
-        var eAngle   = d3.extent(data.map(function(d) { return d.endAngle; }));
+        var val = data.map(function(d) { return d.Direction;   });
+        var unc = data.map(function(d) { return d.Uncertainty; });
 
         var vDom = d3.extent(data.map(function(d) { return d.Direction; }));
         var uDom = d3.extent(data.map(function(d) { return d.Uncertainty; }));
 
-        uDom[0] = msg[0];      
-        uDom[1] = msg[1];      
-        uDom[2] = msg[2];      
-        uDom[3] = msg[3];      
-        console.log(uDom[0]);
-
+        if (msg !== undefined) {
+           if (msg.length != 0) {
+            unc[0] = msg[0];      
+            unc[1] = msg[1];      
+            unc[2] = msg[2];      
+            unc[3] = msg[3];      
+           }
+        }
         var quantization = vsup.quantization().branching(2).layers(3).valueDomain(vDom).uncertaintyDomain(uDom);
         var scale = vsup.scale().quantize(quantization).range(d3.interpolateViridis);
 
@@ -146,47 +99,44 @@
         radius = Math.min(w, h) / 2,
         innerRadius = 0.2 * radius;
 
-     
       
-        makeVSUP(body.append("svg"), w, h, scale, simpleScale, data, "arc");
+        makeVSUP(body.append("svg"), w, h, scale, simpleScale, data, "arc",unc,val,sAngle,eAngle,id);
 
-      });
+      };
 
 
-      function makeVSUP(svg, w, h, scale, simpleScale, data, type) {
+      function makeVSUP(svg, w, h, scale, simpleScale, data, type, unc,val,sAngle,eAngle,id) {
                  
         var pie = d3.pie()
                     .sort(null)
-                    .value(function(d) { return d.Uncertainty; } );
+                    .value(function(d,i) { return unc[i]; } );
 
+        
         var arc = d3.arc()
                         .innerRadius(innerRadius)
-                        .outerRadius(function (d) { 
-                            return (radius - innerRadius) * d.data.Uncertainty + innerRadius; 
+                        .outerRadius(function (d,i) { 
+                            return (radius - innerRadius) * unc[i]*2 + innerRadius; 
                         })
-                        .startAngle(function(d) { return d.data.startAngle; })
-                        .endAngle(function(d) { return d.data.endAngle; });
+                        .startAngle(function(d,i) {return sAngle[i];})
+                        .endAngle(function(d,i) {return eAngle[i];});
 
-
+        
 
         var svg = d3.select("body").append("svg")
                                    .attr("width", w)
                                    .attr("height", h)
                                    .append("g")
-                                   .attr("transform", "translate(5,150)");
+                                   .attr("transform", "translate(5,300)");
 
-      
-              
-        
         var arcEnter = svg.selectAll(".solidArc")
-            .data(pie(data))
+            .data(pie(unc))
             .enter().append("g")
             .classed("solidArc", true)
             .attr("transform", "translate(200,50)");
 
         arcEnter.append("path")
-            .attr("fill", function(d) { return scale(d.data.Direction, d.data.Uncertainty); })
-            .attr("id", function(d) { return d.data.id; })
+            .attr("fill", function(d,i) {return scale(i);})
+            .attr("id", function(d,i) {return id[i];})
             .attr("stroke", "gray")
             .attr("d", arc);
 
@@ -231,10 +181,78 @@
         svg.append("g").call(legend)
       }
       
+  
+//-------------------------------------------
+
+
+  
+
+
+  // Callback to be called every time a message is published on this topic.
+  listener.subscribe(function(message) {
+  console.log('Received message on ' + listener.name + ': ' + message.UncertainList);
+        msg[0] = message.UncertainList[0];
+        msg[1] = message.UncertainList[1];
+        msg[2] = message.UncertainList[2];
+        msg[3] = message.UncertainList[3];
+
+        var data = [
+              {"Direction":3,"Uncertainty":0.25,"startAngle":-0.78,"endAngle":-0.26,"id":"L","label":"Left"},
+              {"Direction":2,"Uncertainty":0.25,"startAngle":-0.26,"endAngle":0.26,"id":"F","label":"Forward"},
+              {"Direction":0,"Uncertainty":0.25,"startAngle":0.26,"endAngle":0.78,"id":"SR","label":"SL right"},
+              {"Direction":1,"Uncertainty":0.25,"startAngle":0.78,"endAngle":1.30,"id":"R","label":"Right"}
+        ];
+         
+        visualize_vsup(msg,data);
         
 
-    </script>
-    </div>
+  
+    // If desired, we can unsubscribe from the topic as well.
+    //listener.unsubscribe();
+  });
+
+</script>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+  <h1>Simple roslib Example</h1>
+  <p>Run the following commands in the terminal then refresh this page. Check the JavaScript
+    console for the output.</p>
+  <ol>
+    <li><tt>roscore</tt></li>
+    <li><tt>rostopic pub /listener std_msgs/String "Hello, World"</tt></li>
+    <li><tt>rostopic echo /cmd_vel</tt></li>
+    <li><tt>rosrun rospy_tutorials add_two_ints_server</tt></li>
+    <li><tt>roslaunch rosbridge_server rosbridge_websocket.launch</tt></li>
+  </ol>
+  <div id="statusIndicator">
+    <p id="connecting">
+      Connecting to rosbridge...
+    </p>
+    <p id="connected" style="color:#00D600; display:none">
+      Connected
+    </p>
+    <p id="error" style="color:#FF0000; display:none">
+      Error in the backend!
+    </p>
+    <p id="closed" style="display:none">
+      Connection closed.
+    </p>
+  </div>
+
+  <div><script>
+
+  var msg = [];
+  var data = [
+              {"Direction":3,"Uncertainty":0.25,"startAngle":-0.78,"endAngle":-0.26,"id":"L","label":"Left"},
+              {"Direction":2,"Uncertainty":0.25,"startAngle":-0.26,"endAngle":0.26,"id":"F","label":"Forward"},
+              {"Direction":0,"Uncertainty":0.25,"startAngle":0.26,"endAngle":0.78,"id":"SR","label":"SL right"},
+              {"Direction":1,"Uncertainty":0.25,"startAngle":0.78,"endAngle":1.30,"id":"R","label":"Right"}
+             ];
+
+  visualize_vsup(msg,data);
+  </script></div>
   
 </body>
 </html>
