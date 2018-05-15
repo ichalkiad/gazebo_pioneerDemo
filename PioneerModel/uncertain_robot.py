@@ -14,11 +14,11 @@ from keras import backend as K
 
 from matplotlib import pyplot as plt
 
-WINDOW_SIZE = 20
+WINDOW_SIZE = 50
 Q = 24
 nb_features = 7
 nb_out = 4
-K_test = 200
+K_test = 2000
 
 ir_sub = []
 ir_range = np.zeros((WINDOW_SIZE,24))
@@ -44,7 +44,7 @@ plt.show(block=False)
 
 
 uncertain_message = UncertainMsg()
-uncertain_message.UncertainList = np.zeros((1,4))
+uncertain_message.UncertainList = np.zeros((1,6))
 
 def update(data,bins,var):
     global ax
@@ -118,7 +118,7 @@ def uncertain_predict(model,X,K_test):
     
     votes, values = np.unique(MC_pred, return_counts=True)
 
-    probs = np.zeros((1,4))
+    probs = np.zeros((1,6))
     total = 0
     for i in xrange(len(votes)):
         probs[0,votes[i]] = values[i]
@@ -162,7 +162,7 @@ if __name__ == '__main__':
      
      IR_listener()
      pub = rospy.Publisher('uncertain', UncertainMsg, queue_size=1)
-     rate = rospy.Rate(0.5)
+     rate = rospy.Rate(1.5)
      
      while not rospy.is_shutdown():
  
@@ -177,8 +177,13 @@ if __name__ == '__main__':
            scaled_data = scaler.transform(ir_range)
 
         MC_pred, vars, epistemic_uncertainty, probs = uncertain_predict(model,scaled_data,K_test)
+        probs[4] = np.max(probs[0:4])
+        check_collision = np.zeros((1,24))
+        check_collision = np.any(np.mean(ir_range,axis=0)-0.2<0.12)
+        if check_collision:
+            probs[5] = 1
         uncertain_message.UncertainList = probs
-        #rospy.loginfo(uncertain_message)
+        rospy.loginfo(probs[0:5])
         pub.publish(uncertain_message)
    
         update(MC_pred,bins,epistemic_uncertainty)
