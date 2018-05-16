@@ -33,6 +33,10 @@
 	     <arg name="port" value="9090"/>
 	</include>
 
+        <!-- Joystick control -->
+       	<include file="$(find teleop_twist_joy)/launch/teleop.launch" > </include>
+        
+
 	<!-- ros_control p3rd launch file -->
 	<!-- <include file="$(find p3dx_control)/launch/control.launch" /> -->
 
