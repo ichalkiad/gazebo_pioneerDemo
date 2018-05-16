@@ -14,7 +14,7 @@ from keras import backend as K
 
 from matplotlib import pyplot as plt
 
-WINDOW_SIZE = 50
+WINDOW_SIZE = 3
 Q = 24
 nb_features = 7
 nb_out = 4
@@ -162,7 +162,7 @@ if __name__ == '__main__':
      
      IR_listener()
      pub = rospy.Publisher('uncertain', UncertainMsg, queue_size=1)
-     rate = rospy.Rate(1.5)
+     rate = rospy.Rate(0.2)
      
      while not rospy.is_shutdown():
  
@@ -179,15 +179,16 @@ if __name__ == '__main__':
         MC_pred, vars, epistemic_uncertainty, probs = uncertain_predict(model,scaled_data,K_test)
         probs[4] = np.max(probs[0:4])
         check_collision = np.zeros((1,24))
-        check_collision = np.any(np.mean(ir_range,axis=0)-0.2<0.12)
+        check_collision = np.any(np.mean(ir_range,axis=0)-0.2<0.2) and (not np.any(ir_range==0))
         if check_collision:
             probs[5] = 1
         uncertain_message.UncertainList = probs
-        rospy.loginfo(probs[0:5])
-        pub.publish(uncertain_message)
+        #rospy.loginfo(ir_range)
+        if win_cnt>WINDOW_SIZE:
+            pub.publish(uncertain_message)
    
         update(MC_pred,bins,epistemic_uncertainty)
-          
+
         win_cnt += 1
         rate.sleep()
         print("end loop")     
