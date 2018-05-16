@@ -58,10 +58,10 @@
 
   var msg = [];
   var data = [
-              {"Direction":3,"Uncertainty":0.25,"startAngle":-0.78,"endAngle":-0.26,"id":"L","label":"Left"},
-              {"Direction":2,"Uncertainty":0.25,"startAngle":-0.26,"endAngle":0.26,"id":"F","label":"Forward"},
-              {"Direction":0,"Uncertainty":0.25,"startAngle":0.26,"endAngle":0.78,"id":"SR","label":"SL right"},
-              {"Direction":1,"Uncertainty":0.25,"startAngle":0.78,"endAngle":1.30,"id":"R","label":"Right"}
+              {"Direction":3,"Uncertainty":0.1,"startAngle":-0.78,"endAngle":-0.26,"id":"L","label":"Left"},
+              {"Direction":2,"Uncertainty":0.7,"startAngle":-0.26,"endAngle":0.26,"id":"F","label":"Forward"},
+              {"Direction":0,"Uncertainty":0.1,"startAngle":0.26,"endAngle":0.78,"id":"SR","label":"SL right"},
+              {"Direction":1,"Uncertainty":0.1,"startAngle":0.78,"endAngle":1.30,"id":"R","label":"Right"}
   ];
   var opacity = [1.0,0.2,0.2];
   var max_prob = 0.25;
@@ -93,7 +93,9 @@
         var squareQuantization = vsup.squareQuantization().n(4).valueDomain(vDom).uncertaintyDomain(uDom);
         var squareScale = vsup.scale().quantize(squareQuantization).range(d3.interpolateViridis);
 
-        var simpleScale = d3.scaleQuantize().domain([0, 1]).range(d3.quantize(d3.interpolateViridis, 4));
+        var simpleScale = d3.scaleQuantize().domain([0,1]).range(d3.quantize(d3.interpolateViridis, 5));
+        
+
         var body = d3.select("body");
 
         var w = 1280;
@@ -142,7 +144,7 @@
             .attr("transform", "translate(-"+w/20+","+h/2+")");
 
        arcEnter.append("path")
-            .attr("fill", function(d,i) {return scale(val[i],1.0-unc[i]);})
+            .attr("fill", function(d,i) {return simpleScale(1.0-unc[i]);})
             .attr("id", function(d,i) {return id[i];})
             .attr("stroke", "gray")
             .attr("d", arc);
@@ -173,11 +175,10 @@
   
 
 
-
-  
        makeLegend(svg, h, w, simpleScale, data, type);        
        create_circles(svg,h,w,max_prob,collision);     
-}
+
+ }
 
   function create_circles(svg,h,w,max_prob,collision) {
         var opacity = [1.0,0.2,0.2]
@@ -227,13 +228,30 @@
           } else if (opacity[2]===1){
               var robotState = "Collided!"
           }
-  
+
+          
           svg.append("text")
              .attr("class", "state")
              .attr("dy", ".35em")
              .attr("transform","translate("+150+",-"+250+")")
-             .text(robotState);  
+             .text(robotState)
 
+
+          d3.select("text.state")
+           .transition()
+           .duration(2500)
+           .on("start", function repeat() {
+                     var t = d3.active(this)
+                     .style("opacity", 0)
+                     .text("Moving...")
+                     .transition(t)
+                     .style("opacity", 1)
+                     .text(robotState)
+                     .delay(2000)
+               });
+
+
+    
     
       }
   
@@ -307,8 +325,7 @@
 
           
         visualise_vsup(data,max_prob, collision);
-        d3.select("body").selectAll("circle")
-  
+           
   
     // If desired, we can unsubscribe from the topic as well.
     //listener.unsubscribe();
@@ -348,7 +365,8 @@
   <div class="outer">
       <div class="middle">
 	      <div class="inner">
-		<script>visualise_vsup(data,max_prob,collision); </script>
+		<script>visualise_vsup(data,max_prob,collision);
+                </script>
 	      </div>
 	</div>
   </div>
