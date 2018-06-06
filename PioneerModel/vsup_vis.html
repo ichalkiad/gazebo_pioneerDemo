@@ -58,10 +58,10 @@
 
   var msg = [];
   var data = [
-              {"Direction":3,"Uncertainty":0.1,"startAngle":-0.78,"endAngle":-0.26,"id":"L","label":"Left"},
-              {"Direction":2,"Uncertainty":0.7,"startAngle":-0.26,"endAngle":0.26,"id":"F","label":"Forward"},
-              {"Direction":0,"Uncertainty":0.1,"startAngle":0.26,"endAngle":0.78,"id":"SR","label":"SL right"},
-              {"Direction":1,"Uncertainty":0.1,"startAngle":0.78,"endAngle":1.30,"id":"R","label":"Right"}
+              {"Direction":3,"Uncertainty":0.45,"startAngle":-0.78,"endAngle":-0.26,"id":"L","label":"Left"},
+              {"Direction":2,"Uncertainty":0.15,"startAngle":-0.26,"endAngle":0.26,"id":"F","label":"Forward"},
+              {"Direction":0,"Uncertainty":0.15,"startAngle":0.26,"endAngle":0.78,"id":"SR","label":"SL right"},
+              {"Direction":1,"Uncertainty":0.25,"startAngle":0.78,"endAngle":1.30,"id":"R","label":"Right"}
   ];
   var opacity = [1.0,0.2,0.2];
   var max_prob = 0.25;
@@ -144,7 +144,7 @@
             .attr("transform", "translate(-"+w/20+","+h/2+")");
 
        arcEnter.append("path")
-            .attr("fill", function(d,i) {return simpleScale(1.0-unc[i]);})
+            .attr("fill","rgb(120, 197, 120)") //function(d,i) {return simpleScale(1.0-unc[i]);})
             .attr("id", function(d,i) {return id[i];})
             .attr("stroke", "gray")
             .attr("d", arc);
@@ -175,7 +175,7 @@
   
 
 
-       makeLegend(svg, h, w, simpleScale, data, type);        
+       //makeLegend(svg, h, w, simpleScale, data, type);        
        create_circles(svg,h,w,max_prob,collision);     
 
  }
@@ -198,12 +198,12 @@
            opacity[1] = 0.2
            opacity[2] = 1.0
         }
-
+//x: 50,250,450
           console.log(opacity)
           var jsonCircles = [
-                       { "x_axis": 50, "y_axis": -150 , "radius": 30, "color" : "green", "opacity" :opacity[0] },
-                       { "x_axis":  250, "y_axis": -150, "radius": 30, "color" : "yellow", "opacity" :opacity[1]},
-                       { "x_axis": 450, "y_axis": -150, "radius": 30, "color" : "red", "opacity" :opacity[2]}];
+                       { "x_axis": -200, "y_axis": -150 , "radius": 30, "color" : "green", "opacity" :opacity[0] },
+                       { "x_axis":  0, "y_axis": -150, "radius": 30, "color" : "yellow", "opacity" :opacity[1]},
+                       { "x_axis": 200, "y_axis": -150, "radius": 30, "color" : "red", "opacity" :opacity[2]}];
 
     
           var circles = svg.selectAll("circle")
@@ -229,11 +229,11 @@
               var robotState = "Collided!"
           }
 
-          
+          // x: +150
           svg.append("text")
              .attr("class", "state")
              .attr("dy", ".35em")
-             .attr("transform","translate("+150+",-"+250+")")
+             .attr("transform","translate("+"-"+50+",-"+250+")")
              .text(robotState)
 
 
@@ -307,8 +307,8 @@
         var collision = message.UncertainList[5]; //binary
   
         var data = [
-              {"Direction":3,"Uncertainty":0.25,"startAngle":-0.78,"endAngle":-0.26,"id":"L","label":"Left"},
-              {"Direction":2,"Uncertainty":0.25,"startAngle":-0.26,"endAngle":0.26,"id":"F","label":"Forward"},
+              {"Direction":3,"Uncertainty":0.35,"startAngle":-0.78,"endAngle":-0.26,"id":"L","label":"Left"},
+              {"Direction":2,"Uncertainty":0.15,"startAngle":-0.26,"endAngle":0.26,"id":"F","label":"Forward"},
               {"Direction":0,"Uncertainty":0.25,"startAngle":0.26,"endAngle":0.78,"id":"SR","label":"SL right"},
               {"Direction":1,"Uncertainty":0.25,"startAngle":0.78,"endAngle":1.30,"id":"R","label":"Right"}
         ];
