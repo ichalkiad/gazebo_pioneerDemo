@@ -4,7 +4,6 @@ from sensor_msgs.msg import Range
 from p3dx_description.msg import UncertainMsg
 import sys
 import numpy as np
-from sklearn.preprocessing import StandardScaler
 import h5py
 
 from keras.layers import Dropout
@@ -14,19 +13,20 @@ from keras import backend as K
 
 from matplotlib import pyplot as plt
 
-WINDOW_SIZE = 3
-Q = 24
+import argparse
+
+Q = 2
 nb_features = 7
 nb_out = 4
 K_test = 2000
+D  = 4
 
+SIGNIFICANT_CHANGE = 0.0001
 ir_sub = []
-ir_range = np.zeros((WINDOW_SIZE,24))
+ir_last = np.zeros((1,24))
+ir_range = np.zeros((1,24))
 cnt = np.zeros((24,))
-win_cnt = 0
-scaler = StandardScaler()
 model = None
-
 
 bins=[0,1,2,3,4]
 names = ['Slight-Right-Turn','Sharp-Right-Turn','Move-Forward','Slight-Left-Turn']
@@ -46,14 +46,20 @@ plt.show(block=False)
 uncertain_message = UncertainMsg()
 uncertain_message.UncertainList = np.zeros((1,6))
 
+
+#Command line arguments
+parser = argparse.ArgumentParser(description='Visualise navigation uncertainty in a ROS/Gazebo simulation.')
+parser.add_argument('--model', dest='model', action='store', default="DNN",help='type of model used to predict next move: DNN,DNN_VarDropout,DNN_compressed')
+parser.add_argument('--dir', dest='dir', action='store', default="/tmp/",help='directory of saved model file')
+args = parser.parse_args()
+
+"""
 def update(data,bins,var):
     global ax
     global fig
     global b
     global names
 
-    
-    
     plt.sca(ax)
     #Update barchart height and x values
     hist, bins = np.histogram(data, density=False, bins=bins)
@@ -64,18 +70,15 @@ def update(data,bins,var):
     ax.autoscale_view()
     ax.set_title("Direction: {}, Variance: {}".format(names[direction],var))
     plt.draw()
-       
-   
+"""    
 
-def create_and_load_model():
-    global Q 
-    global nb_features
-    global nb_out
 
-    filename = '/tmp/compressed_model_weights.h5'
+def DNN_compressed(dir,inp):
+
+    filename = dir+"/compressed_model_weights.h5"
     f = h5py.File(filename, 'r')
     # Keys: ['concrete_dropout_44', 'concrete_dropout_43', 'input_22']
-    #print(list(f))
+    #print(f.items())
     group1 = f['concrete_dropout_43']['concrete_dropout_43']
     b1 = group1['bias'].value
     w1 = group1['kernel'].value
@@ -85,14 +88,120 @@ def create_and_load_model():
     w2 = group2['kernel'].value
     p_logit2 = group2['p_logit'].value
 
-    
-    inp = Input(shape=(Q,))
+
     x = inp
-    x = Dense(nb_features, activation='relu',weights=[w1,b1],name='CD1')(x)
+    x = Dense(7, activation='relu',weights=[w1,b1],name='CD1')(x)
     x = Dropout(np.exp(p_logit1)/(1+np.exp(p_logit1)))(x,training=True)
-    x = Dense(nb_out, activation='sigmoid',weights=[w2,b2],name='CD2')(x)
+    x = Dense(4, activation='sigmoid',weights=[w2,b2],name='CD2')(x)
     x = Dropout(np.exp(p_logit2)/(1+np.exp(p_logit2)))(x,training=True)
     out = x
+
+    return out
+
+
+
+def DNN_VarDropout(dir,inp):
+
+    filename = dir+"/DNN_VarDropout_weights.h5"
+    f = h5py.File(filename, 'r')
+    # Keys: ['concrete_dropout_487', 'concrete_dropout_488', 'concrete_dropout_489','concrete_dropout_490','input_120']
+    #print(f.keys())
+    group1 = f['concrete_dropout_487']['concrete_dropout_134']['concrete_dropout_487'] 
+    b1 = group1['bias'].value
+    w1 = group1['kernel'].value
+    p_logit1 = group1['p_logit'].value
+    group2 = f['concrete_dropout_488']['concrete_dropout_134']['concrete_dropout_488'] 
+    b2 = group2['bias'].value
+    w2 = group2['kernel'].value
+    p_logit2 = group2['p_logit'].value
+    group3 = f['concrete_dropout_489']['concrete_dropout_134']['concrete_dropout_489'] 
+    b3 = group3['bias'].value
+    w3 = group3['kernel'].value
+    p_logit3 = group3['p_logit'].value
+    group4 = f['concrete_dropout_490']['concrete_dropout_134']['concrete_dropout_490'] 
+    b4 = group4['bias'].value
+    w4 = group4['kernel'].value
+    p_logit4 = group4['p_logit'].value
+
+    x = inp
+    x = Dense(64, activation='relu',weights=[w1,b1],name='CD1')(x)
+    x = Dropout(np.exp(p_logit1)/(1+np.exp(p_logit1)))(x,training=True)
+    x = Dense(32, activation='relu',weights=[w2,b2],name='CD1b')(x)
+    x = Dropout(np.exp(p_logit2)/(1+np.exp(p_logit2)))(x,training=True)
+    x = Dense(16, activation='relu',weights=[w2,b2],name='CD1d')(x)
+    x = Dropout(np.exp(p_logit2)/(1+np.exp(p_logit2)))(x,training=True)
+    x = Dense(8, activation='relu',weights=[w3,b3],name='CD1c')(x)
+    x = Dropout(np.exp(p_logit3)/(1+np.exp(p_logit3)))(x,training=True)
+    x = Dense(4, activation='sigmoid',weights=[w4,b4],name='CD2')(x)
+    x = Dropout(np.exp(p_logit4)/(1+np.exp(p_logit4)))(x,training=True)
+    out = x
+
+    return out
+
+    
+
+
+def DNN(dir,inp):
+
+    filename = dir+"/DNN_weights.h5"
+    f = h5py.File(filename, 'r')
+    # Keys: ['concrete_dropout_189', 'concrete_dropout_190', 'concrete_dropout_191','concrete_dropout_192','input_48','CD2']
+    print(f.keys())
+    group1 = f['concrete_dropout_189']['concrete_dropout_189'] 
+    print(group1.items())
+
+    b1 = group1['bias'].value
+    w1 = group1['kernel'].value
+    p_logit1 = group1['p_logit'].value
+    group2 = f['concrete_dropout_190']['concrete_dropout_190'] 
+    print(group2.items())
+
+    b2 = group2['bias'].value
+    w2 = group2['kernel'].value
+    p_logit2 = group2['p_logit'].value
+    group3 = f['concrete_dropout_191']['concrete_dropout_191'] 
+    print(group3.items())
+
+    b3 = group3['bias'].value
+    w3 = group3['kernel'].value
+    p_logit3 = group3['p_logit'].value
+    group4 = f['concrete_dropout_192']['concrete_dropout_192'] 
+    print(group4.items())
+
+    b4 = group4['bias'].value
+    w4 = group4['kernel'].value
+    p_logit4 = group4['p_logit'].value
+
+    x = inp
+    x = Dense(64, activation='relu',weights=[w1,b1],name='CD1')(x)
+    x = Dropout(np.exp(p_logit1)/(1+np.exp(p_logit1)))(x,training=True)
+    x = Dense(32, activation='relu',weights=[w2,b2],name='CD1b')(x)
+    x = Dropout(np.exp(p_logit2)/(1+np.exp(p_logit2)))(x,training=True)
+    x = Dense(16, activation='relu',weights=[w3,b3],name='CD1d')(x)
+    x = Dropout(np.exp(p_logit2)/(1+np.exp(p_logit2)))(x,training=True)
+    x = Dense(8, activation='relu',weights=[w4,b4],name='CD1c')(x)
+    x = Dropout(np.exp(p_logit3)/(1+np.exp(p_logit3)))(x,training=True)
+    x = Dense(D,activation='softmax',name='CD2')(x)
+    out = x
+
+    return out
+
+
+
+def create_and_load_model():
+    global Q 
+    global nb_features
+    global nb_out
+
+    inp = Input(shape=(Q,))
+
+    if args.model=="DNN":
+        out = DNN(args.dir,inp)
+    elif args.model=="DNN_VarDropout":
+        out = DNN_VarDropout(args.dir,inp)
+    elif args.model=="DNN_compressed":
+        out = DNN_compressed(args.dir,inp)
+
     model = Model(inp,out)
     model._make_predict_function()
 
@@ -100,32 +209,45 @@ def create_and_load_model():
     return model
 
 
+
 def uncertain_predict(model,X,K_test):
     
    
-    MC_samples = np.array([model.predict(X) for _ in range(K_test)])
+    MC_samples = np.array([model.predict(np.asarray([X])) for _ in range(K_test)])
     
     k = MC_samples.shape[0]
     MC_means = np.sum(MC_samples,axis=0)/float(k)
     MC_pred = np.argmax(MC_means,axis=-1)
-    means = np.zeros((MC_samples.shape[1],))  
-    means[:] = MC_means[:,0]*0 + MC_means[:,1]*1 + MC_means[:,2]*2 + MC_means[:,3]*3
-    vars = np.zeros((MC_samples.shape[1],))  
-    for q in xrange(MC_samples.shape[1]):
-        vars[q] = ((0-means[q])**2)*MC_means[q,0]+((1-means[q])**2)*MC_means[q,1]+((2-means[q])**2)*MC_means[q,2]+((3-means[q])**2)*MC_means[q,3]
+
+    predictions_per_test_point = np.argmax(MC_samples,axis=-1)
+    mode_fx = []
+    MC_majVote = np.zeros(MC_pred.shape)
+    for i in xrange(MC_pred.shape[0]):
+        votes, values = np.unique(predictions_per_test_point[:,i], return_counts=True)
+        m = np.argmax(votes)
+        mode_fx.append((m,values[m]))
+        MC_majVote[i] = m
+
+    variation_ratio = np.zeros(MC_pred.shape)
+    for j in xrange(len(MC_pred)):
+        variation_ratio[j] = 1 - ((mode_fx[j])[1])/float(K_test)
+    variation_ratio_avg_VR = np.sum(variation_ratio)/float(len(MC_pred))
+    print(variation_ratio_avg_VR)
+       
+    #Average predictive entropy over minibatch
+    predictive_entropy = -1*np.sum(MC_means*np.log(MC_means),axis=-1)
+    predictive_entropy_avg_H = np.sum(predictive_entropy)/float(len(MC_pred))
+    print(predictive_entropy_avg_H)
         
-    epistemic_uncertainty = vars.mean(0)
+    #Average mutual information over minibatch
+    expected_entropy = np.sum(np.sum(MC_samples*np.log(MC_samples),axis=-1),axis=0)/float(K_test)
+    mutual_nformation_avg_MI = predictive_entropy_avg_H + np.sum(expected_entropy)/float(len(MC_pred))
+    print(mutual_nformation_avg_MI)
+
+    combined_confidence = 1.0 - 1.5*((variation_ratio_avg_VR + mutual_nformation_avg_MI)/(1 + variation_ratio_avg_VR + mutual_nformation_avg_MI))
+    print(combined_confidence)
     
-    votes, values = np.unique(MC_pred, return_counts=True)
-
-    probs = np.zeros((1,6))
-    total = 0
-    for i in xrange(len(votes)):
-        probs[0,votes[i]] = values[i]
-        total += values[i]
-
-    p = (probs/float(total))[0]
-    return MC_pred, vars, epistemic_uncertainty,p.tolist()
+    return MC_pred, combined_confidence
 
 
 def ir_callback(msg):
@@ -151,45 +273,45 @@ if __name__ == '__main__':
      global ir_range
      global cnt
      global model
-     global win_cnt
-     global scaler
      global K_test
      global bins
      global uncertain_message
+
     
      rospy.init_node('IR_recorder')
      model = create_and_load_model()
      
      IR_listener()
      pub = rospy.Publisher('uncertain', UncertainMsg, queue_size=1)
-     rate = rospy.Rate(0.2)
+     rate = rospy.Rate(9)
      
      while not rospy.is_shutdown():
  
         print("Read all sensors...")
-        ir_range[win_cnt % WINDOW_SIZE,:] = cnt
+        ir_range = cnt
+      
+        front = np.min([ir_range[0],ir_range[1],ir_range[2],ir_range[22],ir_range[23]])  #22,23,0,1,2
+        left = np.min([ir_range[16:21]])  #16,17,18,19,20
        
-        if win_cnt<WINDOW_SIZE:
-           scaler.fit(ir_range[0:win_cnt+1,:])   ##?????????????????? scaling for evaluation???
-           scaled_data = scaler.transform(ir_range[0:win_cnt+1,:])
-        else:
-           scaler.fit(ir_range)   ##?????????????????? scaling for evaluation???
-           scaled_data = scaler.transform(ir_range)
 
-        MC_pred, vars, epistemic_uncertainty, probs = uncertain_predict(model,scaled_data,K_test)
-        probs[4] = np.max(probs[0:4])
+        readIR = np.array([front,left])
+        scaled_range = readIR/float(np.linalg.norm(readIR))
+        MC_pred, combined_confidence = uncertain_predict(model,scaled_range,K_test) 
+
+        #REPLACE WITH BUMPER PLUG-IN
         check_collision = np.zeros((1,24))
         check_collision = np.any(np.mean(ir_range,axis=0)-0.2<0.2) and (not np.any(ir_range==0))
-        if check_collision:
-            probs[5] = 1
-        uncertain_message.UncertainList = probs
+        #if check_collision:
+        #set indicator in msg
+
+        uncertain_message.UncertainList = np.array([combined_confidence])
         #rospy.loginfo(ir_range)
-        if win_cnt>WINDOW_SIZE:
+        if np.linalg.norm(ir_range-ir_last)/24.0>SIGNIFICANT_CHANGE:
             pub.publish(uncertain_message)
    
-        update(MC_pred,bins,epistemic_uncertainty)
+        #update(MC_pred,bins,epistemic_uncertainty)
 
-        win_cnt += 1
+        ir_last = ir_range
         rate.sleep()
         print("end loop")     
         
