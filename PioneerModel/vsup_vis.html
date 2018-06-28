@@ -64,14 +64,15 @@
               {"Direction":1,"Uncertainty":0.25,"startAngle":0.78,"endAngle":1.30,"id":"R","label":"Right"}
   ];
   var opacity = [1.0,0.2,0.2];
-  var max_prob = 0.25;
+  var r_state = 0
   var collision = 0;
-  var variance_threshold = 0.70;
   
+  var variance_threshold = 0.70;
+  var direction = 3;
 
   //-------------------------------------------
 
-  function visualise_vsup(data,max_prob,collision) {
+  function visualise_vsup(data,r_state,collision,direction) {
 
         var label  = data.map(function(d) { return d.label; });
         var id     = data.map(function(d) { return d.id; });
@@ -104,19 +105,12 @@
         innerRadius = 0.2*radius;
 
         d3.selectAll("svg.canvas").remove();      
-        makeVSUP(w, h, scale, simpleScale, data, "simple",unc,val,sAngle,eAngle,id,label,max_prob,collision);
+        makeVSUP(w, h, scale, simpleScale, data, "simple",unc,val,sAngle,eAngle,id,label,r_state,collision,direction);
 
       };
 
-      function midAngle(d){
-		return d.startAngle + (d.endAngle - d.startAngle)/2;
-      }
-      function angle(d) {
-          var a = (d.startAngle + d.endAngle) * 90 / Math.PI - 90;
-          return a > 90 ? a - 180 : a;
-      }
   
-      function makeVSUP(w, h, scale, simpleScale, data, type, unc,val,sAngle,eAngle,id,label,max_prob,collision) {
+      function makeVSUP(w, h, scale, simpleScale, data, type, unc,val,sAngle,eAngle,id,label,r_state,collision,direction) {
                  
         var pie = d3.pie()
                     .sort(null)
@@ -130,40 +124,36 @@
                         .startAngle(function(d,i) {return sAngle[i];})
                         .endAngle(function(d,i) {return eAngle[i];});
 
-       var svg = d3.select("body").append("svg")
+        var svg = d3.select("body").append("svg")
                                    .attr("class","canvas")
                                    .attr("width", w)
                                    .attr("height", h)
                                    .append("g")
                                    .attr("transform", "translate("+w/2+","+h/2+")");
 
-       var arcEnter = svg.selectAll(".solidArc")
-            .data(pie(unc))
-            .enter().append("g")
-            .classed("solidArc", true)
-            .attr("transform", "translate(-"+w/20+","+h/2+")");
+        var arcEnter = svg.selectAll(".solidArc")
+                          .data(pie(unc))
+                          .enter().append("g")
+                          .classed("solidArc", true)
+                          .attr("transform", "translate(-"+w/20+","+h/2+")");
 
-       arcEnter.append("path")
-            .attr("fill","rgb(120, 197, 120)") //function(d,i) {return simpleScale(1.0-unc[i]);})
-            .attr("id", function(d,i) {return id[i];})
-            .attr("stroke", "gray")
-            .attr("d", arc);
+        arcEnter.append("path")
+                .attr("fill","rgb(120, 197, 120)") //function(d,i) {return simpleScale(1.0-unc[i]);})
+                .attr("id", function(d,i) {return id[i];})
+                .attr("stroke", "gray")
+                .attr("d", arc);
 
 
 
-       var max_prob = data[0].Uncertainty;
        direction = "Left";
-       if (data[1].Uncertainty > max_prob) {
-           max_prob = data[1].Uncertainty;
+       if (direction===2) {
            direction = "Forward";
        }
-       if (data[2].Uncertainty > max_prob) {
-           max_prob = data[2].Uncertainty;
+       if (direction===0) {
            direction = "Slightly Right";
        }
-       if (data[3].Uncertainty > max_prob) {
-           max_prob = data[3].Uncertainty;
-       direction = "Right";
+       if (direction===1) {
+           direction = "Right";
        }
   
   
@@ -173,31 +163,15 @@
           .attr("transform","translate(-"+w/3+","+h/2.5+")")
           .text(direction);                            
   
-
-
-       //makeLegend(svg, h, w, simpleScale, data, type);        
-       create_circles(svg,h,w,max_prob,collision);     
+     
+       create_circles(svg,h,w,r_state,collision);     
 
  }
 
-  function create_circles(svg,h,w,max_prob,collision) {
+  function create_circles(svg,h,w,r_state,collision) {
+  
         var opacity = [1.0,0.2,0.2]
-        if (max_prob < variance_threshold) {
-           opacity[0] =  0.2
-           opacity[1] = 1.0
-           opacity[2] = 0.2
-        }
-        else if (max_prob > variance_threshold) {
-           opacity[0] =  1.0
-           opacity[1] = 0.2
-           opacity[2] = 0.2
 
-	}
-        if (collision) {
-           opacity[0] = 0.2
-           opacity[1] = 0.2
-           opacity[2] = 1.0
-        }
 //x: 50,250,450
           console.log(opacity)
           var jsonCircles = [
@@ -221,12 +195,21 @@
                        .style("opacity", function(d) { return d.opacity; });
 
 
-          if (opacity[0]===1){
-              var robotState = "Inspecting..."
-          } else if (opacity[1]===1){
-              var robotState = "I am confused..."
-          } else if (opacity[2]===1){
-              var robotState = "Collided!"
+          if (r_state===1){
+             var robotState = "Inspecting..."
+             opacity[0] =  0.2
+             opacity[1] = 1.0
+             opacity[2] = 0.2
+          } else if (r_state===2){
+             var robotState = "I am confused..."
+             opacity[0] =  1.0
+             opacity[1] = 0.2
+             opacity[2] = 0.2
+          } else if (r_state===3){
+             var robotState = "Collided!"
+             opacity[0] = 0.2
+             opacity[1] = 0.2
+             opacity[2] = 1.0
           }
 
           // x: +150
@@ -247,7 +230,7 @@
                      .transition(t)
                      .style("opacity", 1)
                      .text(robotState)
-                     .delay(2000)
+                     .delay(3000)
                });
 
 
@@ -255,45 +238,8 @@
     
       }
   
-      function makeLegend(svg, h, w, scale, data, type) {
-
-        var legend = type === "arc" ? vsup.legend.arcmapLegend() : vsup.legend.simpleLegend();
-
-        if (type==="arc") {
-            legend
-                .scale(scale)
-                .size(160)
-                .x(w/3)
-                .y(h/3)
-                .vtitle("Direction")
-                .utitle("Danger of collision");
-        } else {
-             legend
-                .scale(scale)
-                .size(160)
-                .height(40)
-                .x(w/3)
-                .y(h/3)
-                .title("Danger of collision");
-        }
-        svg.append("g").call(legend)
-        if (type==="arc") {
-                //remove Value axis
-                var leg = svg.select(".legend")
-                console.log(leg)
-                var tmp = leg._groups[0][0].childNodes[2];
-                leg._groups[0][0].removeChild(tmp);
-                tmp = leg._groups[0][0].childNodes[2];
-                leg._groups[0][0].removeChild(tmp);
-        }         
-      }
-      
   
 //-------------------------------------------
-
-
-  
-
 
   // Callback to be called every time a message is published on this topic.
   listener.subscribe(function(message) {
@@ -303,9 +249,11 @@
         msg[2] = message.UncertainList[2];
         msg[3] = message.UncertainList[3];
 
-        var max_prob = message.UncertainList[4];
-        var collision = message.UncertainList[5]; //binary
-  
+       
+        var collision = message.UncertainList[4]; //binary
+        var r_state = message.UncertainList[6];
+        var direction = message.UncertainList[7];
+
         var data = [
               {"Direction":3,"Uncertainty":0.35,"startAngle":-0.78,"endAngle":-0.26,"id":"L","label":"Left"},
               {"Direction":2,"Uncertainty":0.15,"startAngle":-0.26,"endAngle":0.26,"id":"F","label":"Forward"},
@@ -322,9 +270,10 @@
             data[3].Uncertainty = msg[1];      
            }
         }
-
-          
-        visualise_vsup(data,max_prob, collision);
+       
+        console.log(msg);
+    
+        visualise_vsup(data, r_state, collision);
            
   
     // If desired, we can unsubscribe from the topic as well.
@@ -336,18 +285,7 @@
 </head>
 
 <body>
-   
-  <!--h1>Simple roslib Example</h1>
-  <p>Run the following commands in the terminal then refresh this page. Check the JavaScript
-    console for the output.</p>
-  <ol>
-    <li><tt>roscore</tt></li>
-    <li><tt>rostopic pub /listener std_msgs/String "Hello, World"</tt></li>
-    <li><tt>rostopic echo /cmd_vel</tt></li>
-    <li><tt>rosrun rospy_tutorials add_two_ints_server</tt></li>
-    <li><tt>roslaunch rosbridge_server rosbridge_websocket.launch</tt></li>
-  </ol-->
-  <h1></h1>
+   <h1></h1>
   <div id="statusIndicator">
     <p id="connecting">
       Connecting to rosbridge...
@@ -365,7 +303,7 @@
   <div class="outer">
       <div class="middle">
 	      <div class="inner">
-		<script>visualise_vsup(data,max_prob,collision);
+		<script>visualise_vsup(data,r_state,collision);
                 </script>
 	      </div>
 	</div>
