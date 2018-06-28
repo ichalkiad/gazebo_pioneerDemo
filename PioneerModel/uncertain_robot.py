@@ -23,7 +23,7 @@ D  = 4
 
 SIGNIFICANT_CHANGE = 0.0001
 ir_sub = []
-ir_last = np.zeros((1,24))
+ir_last = np.zeros((1,2))
 ir_range = np.zeros((1,24))
 cnt = np.zeros((24,))
 model = None
@@ -91,7 +91,7 @@ def DNN_compressed(dir,inp):
 
     x = inp
     x = Dense(7, activation='relu',weights=[w1,b1],name='CD1')(x)
-    x = Dropout(np.exp(p_logit1)/(1+np.exp(p_logit1)))(x,training=True)
+    #x = Dropout(np.exp(p_logit1)/(1+np.exp(p_logit1)))(x,training=True)
     x = Dense(4, activation='sigmoid',weights=[w2,b2],name='CD2')(x)
     x = Dropout(np.exp(p_logit2)/(1+np.exp(p_logit2)))(x,training=True)
     out = x
@@ -125,7 +125,7 @@ def DNN_VarDropout(dir,inp):
 
     x = inp
     x = Dense(64, activation='relu',weights=[w1,b1],name='CD1')(x)
-    x = Dropout(np.exp(p_logit1)/(1+np.exp(p_logit1)))(x,training=True)
+    #x = Dropout(np.exp(p_logit1)/(1+np.exp(p_logit1)))(x,training=True)
     x = Dense(32, activation='relu',weights=[w2,b2],name='CD1b')(x)
     x = Dropout(np.exp(p_logit2)/(1+np.exp(p_logit2)))(x,training=True)
     x = Dense(16, activation='relu',weights=[w2,b2],name='CD1d')(x)
@@ -174,7 +174,7 @@ def DNN(dir,inp):
 
     x = inp
     x = Dense(64, activation='relu',weights=[w1,b1],name='CD1')(x)
-    x = Dropout(np.exp(p_logit1)/(1+np.exp(p_logit1)))(x,training=True)
+    #x = Dropout(np.exp(p_logit1)/(1+np.exp(p_logit1)))(x,training=True)
     x = Dense(32, activation='relu',weights=[w2,b2],name='CD1b')(x)
     x = Dropout(np.exp(p_logit2)/(1+np.exp(p_logit2)))(x,training=True)
     x = Dense(16, activation='relu',weights=[w3,b3],name='CD1d')(x)
@@ -213,20 +213,28 @@ def create_and_load_model():
 def uncertain_predict(model,X,K_test):
     
    
-    MC_samples = np.array([model.predict(np.asarray([X])) for _ in range(K_test)])
+    MC_samples = np.array([model.predict(np.asarray([X])) for _ in range(K_test)])  #K_test x N x 4
     
     k = MC_samples.shape[0]
-    MC_means = np.sum(MC_samples,axis=0)/float(k)
-    MC_pred = np.argmax(MC_means,axis=-1)
+    #Mean over K_test
+    MC_means = np.sum(MC_samples,axis=0)/float(k) # N x 4
+    #Prediction based on mean over K_test
+    MC_pred = np.argmax(MC_means,axis=-1) # N x 1
 
-    predictions_per_test_point = np.argmax(MC_samples,axis=-1)
+    #Prediction for every K_test sample for all points in minibatch
+    predictions_per_test_point = np.argmax(MC_samples,axis=-1) # K_test x N
     mode_fx = []
+    #Majority vote for each point in minibatch
     MC_majVote = np.zeros(MC_pred.shape)
     for i in xrange(MC_pred.shape[0]):
-        votes, values = np.unique(predictions_per_test_point[:,i], return_counts=True)
+        values, votes = np.unique(predictions_per_test_point[:,i], return_counts=True)
+        #print(values,votes)
         m = np.argmax(votes)
-        mode_fx.append((m,values[m]))
-        MC_majVote[i] = m
+        print(values,votes)
+        mode_fx.append((values[m],votes[m]))
+        #print(predictions_per_test_point[:,i])
+        #print(mode_fx[-1])
+        MC_majVote[i] = values[m]
 
     variation_ratio = np.zeros(MC_pred.shape)
     for j in xrange(len(MC_pred)):
@@ -241,10 +249,10 @@ def uncertain_predict(model,X,K_test):
         
     #Average mutual information over minibatch
     expected_entropy = np.sum(np.sum(MC_samples*np.log(MC_samples),axis=-1),axis=0)/float(K_test)
-    mutual_nformation_avg_MI = predictive_entropy_avg_H + np.sum(expected_entropy)/float(len(MC_pred))
-    print(mutual_nformation_avg_MI)
+    mutual_information_avg_MI = predictive_entropy_avg_H + np.sum(expected_entropy)/float(len(MC_pred))
+    print(mutual_information_avg_MI)
 
-    combined_confidence = 1.0 - 1.5*((variation_ratio_avg_VR + mutual_nformation_avg_MI)/(1 + variation_ratio_avg_VR + mutual_nformation_avg_MI))
+    combined_confidence = 1.0 - 1.5*((variation_ratio_avg_VR + mutual_information_avg_MI)/(1 + variation_ratio_avg_VR + mutual_information_avg_MI))
     print(combined_confidence)
     
     return MC_pred, combined_confidence
@@ -292,7 +300,7 @@ if __name__ == '__main__':
       
         front = np.min([ir_range[0],ir_range[1],ir_range[2],ir_range[22],ir_range[23]])  #22,23,0,1,2
         left = np.min([ir_range[16:21]])  #16,17,18,19,20
-       
+
 
         readIR = np.array([front,left])
         scaled_range = readIR/float(np.linalg.norm(readIR))
@@ -305,13 +313,16 @@ if __name__ == '__main__':
         #set indicator in msg
 
         uncertain_message.UncertainList = np.array([combined_confidence])
-        #rospy.loginfo(ir_range)
-        if np.linalg.norm(ir_range-ir_last)/24.0>SIGNIFICANT_CHANGE:
+        rospy.loginfo(ir_range)
+        rospy.loginfo(scaled_range)
+        rospy.loginfo(combined_confidence)
+        if np.linalg.norm(readIR-ir_last)/2.0>SIGNIFICANT_CHANGE:
             pub.publish(uncertain_message)
    
         #update(MC_pred,bins,epistemic_uncertainty)
 
-        ir_last = ir_range
+        ir_last = readIR
+        
         rate.sleep()
         print("end loop")     
         
