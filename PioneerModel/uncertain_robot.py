@@ -21,12 +21,16 @@ nb_out = 4
 K_test = 2000
 D  = 4
 
+confidence_thres = 0.7
+
 SIGNIFICANT_CHANGE = 0.0001
 ir_sub = []
 ir_last = np.zeros((1,2))
 ir_range = np.zeros((1,24))
 cnt = np.zeros((24,))
 model = None
+majVoteProbab = np.zeros((4,1))
+
 
 bins=[0,1,2,3,4]
 names = ['Slight-Right-Turn','Sharp-Right-Turn','Move-Forward','Slight-Left-Turn']
@@ -254,8 +258,12 @@ def uncertain_predict(model,X,K_test):
 
     combined_confidence = 1.0 - 1.5*((variation_ratio_avg_VR + mutual_information_avg_MI)/(1 + variation_ratio_avg_VR + mutual_information_avg_MI))
     print(combined_confidence)
+
+    # ONLY as long as we predict for a single x
+    for i in xrange(len(votes)):
+        majVoteProbab[values[i]] = votes[i]/float(K_test)
     
-    return MC_pred, combined_confidence
+    return MC_pred, majVoteProbab.flatten(), combined_confidence, variation_ratio_avg_VR, mutual_information_avg_MI
 
 
 def ir_callback(msg):
@@ -284,14 +292,16 @@ if __name__ == '__main__':
      global K_test
      global bins
      global uncertain_message
-
-    
+     global majVoteProbab
+     global confidence_thres
+     
      rospy.init_node('IR_recorder')
      model = create_and_load_model()
      
      IR_listener()
      pub = rospy.Publisher('uncertain', UncertainMsg, queue_size=1)
      rate = rospy.Rate(9)
+     MC_pred = np.array([-1])
      
      while not rospy.is_shutdown():
  
@@ -304,15 +314,24 @@ if __name__ == '__main__':
 
         readIR = np.array([front,left])
         scaled_range = readIR/float(np.linalg.norm(readIR))
-        MC_pred, combined_confidence = uncertain_predict(model,scaled_range,K_test) 
+        MC_pred, majVoteProbab, combined_confidence, variation_ratio_avg_VR, mutual_information_avg_MI = uncertain_predict(model,scaled_range,K_test) 
 
+        
+        
         #REPLACE WITH BUMPER PLUG-IN
         check_collision = np.zeros((1,24))
         check_collision = np.any(np.mean(ir_range,axis=0)-0.2<0.2) and (not np.any(ir_range==0))
-        #if check_collision:
-        #set indicator in msg
 
-        uncertain_message.UncertainList = np.array([combined_confidence])
+        if combined_confidence<confidence_thres:
+            robot_state = 2
+        else:
+            robot_state = 1
+        if check_collision:
+            robot_state = 3
+
+     
+        uncertain_message.UncertainList = np.array([majVoteProbab[0],majVoteProbab[1],majVoteProbab[2],majVoteProbab[3],check_collision,combined_confidence,robot_state,MC_pred.flatten()[0]])
+        
         rospy.loginfo(ir_range)
         rospy.loginfo(scaled_range)
         rospy.loginfo(combined_confidence)
