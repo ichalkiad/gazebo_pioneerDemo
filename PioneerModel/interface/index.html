@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1" />
+<script src="https://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+<script type="text/javascript" src="https://static.robotwebtools.org/roslibjs/current/roslib.js"></script>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vsup@latest"></script>
+</script>
+<link rel="stylesheet" type="text/css" href="css/style.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<script src="js/vis.js"></script>
+<script src="js/ros_connect.js"></script>
+
+</head>
+
+<body>
+
+ 
+<div class="container">
+
+  <div class="row">
+    <div class="col-lg-6" id="indicator">
+      <p id="connecting">
+	Connecting to rosbridge...
+      </p>
+      <p id="connected" style="color:#00D600; display:none">
+	Connected
+      </p>
+      <p id="error" style="color:#FF0000; display:none">
+	Error in the backend!
+      </p>
+      <p id="closed" style="display:none">
+	Connection closed.
+      </p>
+    </div>
+
+    <div class="col-lg-6" id="piechart">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-6" id="map">
+    </div>
+
+    <div class="col-lg-6" id="uncertainty">
+    </div>
+  </div>
+
+</div>
+
+</body>
+
+
+</html>
