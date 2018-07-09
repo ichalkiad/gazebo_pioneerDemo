@@ -23,7 +23,7 @@ D  = 4
 
 confidence_thres = 0.7
 
-SIGNIFICANT_CHANGE = 0.0001
+SIGNIFICANT_CHANGE = 0.0005
 ir_sub = []
 ir_last = np.zeros((1,2))
 ir_range = np.zeros((1,24))
@@ -150,32 +150,40 @@ def DNN(dir,inp):
     filename = dir+"/DNN_weights.h5"
     f = h5py.File(filename, 'r')
     # Keys: ['concrete_dropout_189', 'concrete_dropout_190', 'concrete_dropout_191','concrete_dropout_192','input_48','CD2']
+    #[u'CD1', u'CD2', u'concrete_dropout_148', u'concrete_dropout_149', u'concrete_dropout_150', u'input_50']
     print(f.keys())
-    group1 = f['concrete_dropout_189']['concrete_dropout_189'] 
+    group1 = f['CD1']['CD1'] 
     print(group1.items())
 
     b1 = group1['bias'].value
     w1 = group1['kernel'].value
-    p_logit1 = group1['p_logit'].value
-    group2 = f['concrete_dropout_190']['concrete_dropout_190'] 
+
+    group2 = f['concrete_dropout_148']['concrete_dropout_148'] 
     print(group2.items())
 
     b2 = group2['bias'].value
     w2 = group2['kernel'].value
     p_logit2 = group2['p_logit'].value
-    group3 = f['concrete_dropout_191']['concrete_dropout_191'] 
+    group3 = f['concrete_dropout_149']['concrete_dropout_149'] 
     print(group3.items())
 
     b3 = group3['bias'].value
     w3 = group3['kernel'].value
     p_logit3 = group3['p_logit'].value
-    group4 = f['concrete_dropout_192']['concrete_dropout_192'] 
+    group4 = f['concrete_dropout_150']['concrete_dropout_150'] 
     print(group4.items())
 
     b4 = group4['bias'].value
     w4 = group4['kernel'].value
     p_logit4 = group4['p_logit'].value
 
+    group5 = f['CD2']['CD2'] 
+    print(group5.items())
+
+    b5 = group5['bias'].value
+    w5 = group5['kernel'].value
+
+    
     x = inp
     x = Dense(64, activation='relu',weights=[w1,b1],name='CD1')(x)
     #x = Dropout(np.exp(p_logit1)/(1+np.exp(p_logit1)))(x,training=True)
@@ -300,7 +308,7 @@ if __name__ == '__main__':
      
      IR_listener()
      pub = rospy.Publisher('uncertain', UncertainMsg, queue_size=1)
-     rate = rospy.Rate(9)
+     rate = rospy.Rate(40)
      MC_pred = np.array([-1])
      
      while not rospy.is_shutdown():
@@ -335,8 +343,10 @@ if __name__ == '__main__':
         rospy.loginfo(ir_range)
         rospy.loginfo(scaled_range)
         rospy.loginfo(combined_confidence)
+        print(np.linalg.norm(readIR-ir_last)/2.0)
+        
         if np.linalg.norm(readIR-ir_last)/2.0>SIGNIFICANT_CHANGE:
-            pub.publish(uncertain_message)
+           pub.publish(uncertain_message)
    
         #update(MC_pred,bins,epistemic_uncertainty)
 
