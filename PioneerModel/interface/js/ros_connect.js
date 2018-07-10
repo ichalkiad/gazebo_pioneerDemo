@@ -53,6 +53,9 @@ var collision = 0;
   
 var variance_threshold = 0.70;
 var direction = 3;
+var mutual_info = 30;
+var variation_ratio = 10;
+var combined_confidence = 50;
 
 
 // Callback to be called every time a message is published on this topic.
@@ -66,9 +69,13 @@ listener.subscribe(function(message) {
 
        
         var collision = message.UncertainList[4]; //binary
-        var r_state = message.UncertainList[6];
-        var direction = message.UncertainList[7];
+        var r_state = message.UncertainList[8];
+        var direction = message.UncertainList[9];
+        var mutual_info = message.UncertainList[7];
+        var variation_ratio = message.UncertainList[6];
+        var combined_confidence = message.UncertainList[5];
 
+    
         var data = [
               {"Direction":3,"Uncertainty":0.35,"startAngle":-0.78,"endAngle":-0.26,"id":"L","label":"Left"},
               {"Direction":2,"Uncertainty":0.15,"startAngle":-0.26,"endAngle":0.26,"id":"F","label":"Forward"},
@@ -88,6 +95,6 @@ listener.subscribe(function(message) {
        
         console.log(msg);
     
-        visualise_vsup(data, r_state, collision,direction);
+        visualise_vsup(data, r_state, collision,direction, mutual_info,variation_ratio,combined_confidence);
            
 });
