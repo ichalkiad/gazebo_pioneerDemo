@@ -338,7 +338,7 @@ if __name__ == '__main__':
             robot_state = 3
 
      
-        uncertain_message.UncertainList = np.array([majVoteProbab[0],majVoteProbab[1],majVoteProbab[2],majVoteProbab[3],check_collision,combined_confidence,robot_state,MC_pred.flatten()[0]])
+        uncertain_message.UncertainList = np.array([majVoteProbab[0],majVoteProbab[1],majVoteProbab[2],majVoteProbab[3],check_collision,combined_confidence, variation_ratio_avg_VR, mutual_information_avg_MI, robot_state,MC_pred.flatten()[0]])
         
         rospy.loginfo(ir_range)
         rospy.loginfo(scaled_range)
