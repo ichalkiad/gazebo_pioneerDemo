@@ -1,42 +1,93 @@
+function make_map() {
+
+    var svg = d3.select(".map")
+                .append("svg")
+                .attr("width", 540)
+                .attr("height", 405)
+                .attr("id", "map");
+
+    var images = ["musicon.jpg","map.jpg"]
+    var imgs = svg.selectAll("image").data([0]);
+    imgs.enter()
+        .append("svg:image")
+        .attr("xlink:href", images[1])
+        .attr("x", "10")
+        .attr("y", "10")
+        .attr("width", "540")
+        .attr("height", "405")
+        .on("click", function(){
+                var images = ["musicon.jpg","map.jpg"]
+		var active  = map.active ? false : true ,
+		              newOpacity = active ? 0 : 1;
+            d3.select(this).attr("xlink:href", images[newOpacity])
+	    map.active = active;
+	});
+
+}
+
 function make_bar(h,w,mutual_info,variation_ratio,combined_confidence){
 
-    var data = [{"name":["MI","VR","CC"], "score": [mutual_info,variation_ratio,combined_confidence]}];
-    console.log(data);
+    var data = [
+	{"Label":"Combined Confidence","Value":combined_confidence},
+	{"Label":"Variation Ratio","Value":variation_ratio},
+        {"Label":"Mutual Information","Value":mutual_info}
+        ]
 
-   
-    var width = 600;
-    var height  = 500;
-    var dataset = [mutual_info,variation_ratio,combined_confidence];
+    var margin = {top: 50, right: 20, bottom: 30, left: 120},
+	width = 450 - margin.left - margin.right,
+	height = 500*2/3 - margin.top - margin.bottom;
 
-    var xScale = d3.scaleBand()
-        .domain(d3.range(0, dataset.length))
-		   .range([0, width], 0.5);
-    var yScale = d3.scaleLinear()
-                   .domain([0, d3.max(dataset)])
-		   .range([0, height]);
-    var svg = d3.select("#uncertainty")
-		.append("svg")
-         	.attr("width", width)
-		.attr("height", height);
-    svg.selectAll("rect")
-       .data(dataset)
+    var y = d3.scaleBand()
+          .range([height, 0])
+          .padding(0.1);
+
+    var x = d3.scaleLinear()
+          .range([0, width]);
+          
+
+    var svg = d3.select(".uncertainty").append("svg")
+	        .attr("width", width + margin.left + margin.right)
+	        .attr("height", height + margin.top + margin.bottom)
+	        .append("g")
+	        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+/*    data.forEach(function(d) {
+       d.Value = +d.Value;
+    });
+*/
+    x.domain([0, d3.max(data, function(d){ return d.Value; })])
+    y.domain(data.map(function(d) { return d.Label; }));
+
+    svg.selectAll(".bar")
+       .data(data)
        .enter()
        .append("rect")
-       .attr("x", function(d, i) {return xScale(i);  })
-       .attr("y", function(d) {return height - yScale(d); })
-       .attr("width", 50 )//xScale.bandwidth())
-       .attr("height", function(d) {return yScale(d);  })
-       .attr("fill", function(d) {return "rgb(0, 0, " + (d * 10) + ")";  })
-       .on("mouseover", function(d) {var xPosition = parseFloat(d3.select(this).attr("x")) + xScale.bandwidth() / 2;
-				     var yPosition = parseFloat(d3.select(this).attr("y")) / 2 + height / 2;
-					d3.select("#tooltip")
-					  .style("left", xPosition + "px")
-                                          .style("top", yPosition + "px")
-					  .select("#value")
-					  .text(d);
-					d3.select("#tooltip").classed("hidden", false);
-			   })
-        .on("mouseout", function() {d3.select("#tooltip").classed("hidden", true);  })
+       .attr("width", function(d) {return x(d.Value); })
+       .attr("y", function(d) { return y(d.Label); })
+       .attr("height", 20)
+       .attr("fill", function(d,i) {
+	                 if (i==0)  return "rgb(50, 205, 50)";
+	                 else return "rgb(0, 0, 128)";
+	               })
+       .on("mousemove", function(d) {
+	              var xPosition = d3.mouse(this)[0] ;
+            var yPosition = d3.mouse(this)[1] ;
+	    console.log(xPosition,yPosition)
+                     d3.select("#tooltip")
+  		       .style("left", xPosition + "px")
+                       .style("top", yPosition + "px")
+		       .style("display", "inline-block")
+                       .html((d.Label) + "<br>" +(d.Value));
+		     d3.select("#tooltip").classed("hidden", false);
+        })
+        .on("mouseout", function() {d3.select("#tooltip").classed("hidden", true);
+	});
+
+
+    svg.append("g")
+       .attr("transform", "translate(" + 0 + ",-" + 25  + ")")
+       .call(d3.axisLeft(y));
+
 }
 
 
@@ -45,20 +96,18 @@ function make_circles(h,w,r_state,collision) {
   
           var opacity = [1.0,0.2,0.2]
 
-//x: 50,250,450
-          console.log(opacity)
           var jsonCircles = [
                        { "x_axis": -200, "y_axis": -150 , "radius": 30, "color" : "green", "opacity" :opacity[0] },
                        { "x_axis":  0, "y_axis": -150, "radius": 30, "color" : "yellow", "opacity" :opacity[1]},
                        { "x_axis": 200, "y_axis": -150, "radius": 30, "color" : "red", "opacity" :opacity[2]}];
 
 
-          var svg = d3.select("#indicator").append("div")
+          var svg = d3.select(".indicator").append("div")
 	                                   .attr("class","canvas")
 	                                   .classed("svg-container", true)
                                            .append("svg")
                                            .attr("preserveAspectRatio", "xMinYMin meet")
-                                           .attr("viewBox", "-300 -600 600 640")
+                                           .attr("viewBox", "-270 -450 540 400")
                                            .classed("svg-content-responsive", true);
     
           var circles = svg.selectAll("circle")
@@ -76,6 +125,7 @@ function make_circles(h,w,r_state,collision) {
                        .style("opacity", function(d)   { return d.opacity; });
 
           console.log(r_state);
+          var robotState = "Inspecting..."
           if (r_state===1){
              var robotState = "Inspecting..."
              opacity[0] =  0.2
@@ -93,20 +143,14 @@ function make_circles(h,w,r_state,collision) {
              opacity[2] = 1.0
           }
 
-    // x: +150
-          
-           wd = d3.select("#piechart").node().getBoundingClientRect().width
-           hd = d3.select("#piechart").node().getBoundingClientRect().height
-           console.log(wd);
-           console.log(hd);
-    
           svg.append("text")
              .attr("class", "state")
              .attr("dy", ".35em")
-             .attr("transform","translate("+"-"+wd/2+",-"+hd/2+")")
-             .text(robotState)
+             .attr('x' , -130)
+	     .attr('y', -300)
+	     .text(robotState)
 
-/*
+
           d3.select("text.state")
            .transition()
            .duration(3000)
@@ -118,10 +162,8 @@ function make_circles(h,w,r_state,collision) {
                      .style("opacity", 1)
                      .text(robotState)
                      .delay(3000)
-               });
-
-*/
-    
+            });
+   
     
       }
   
@@ -141,25 +183,12 @@ function make_pie(w, h, scale, simpleScale, data, type, unc,val,sAngle,eAngle,id
                         .startAngle(function(d,i) {return sAngle[i];})
                         .endAngle(function(d,i) {return eAngle[i];});
 
-    yy = d3.select("#piechart").node().getBoundingClientRect().y
-    xx = d3.select("#piechart").node().getBoundingClientRect().x
-    wd = d3.select("#piechart").node().getBoundingClientRect().width
-    hd = d3.select("#piechart").node().getBoundingClientRect().height
-
-
-    console.log(yy)
-    console.log(xx)
-    console.log(wd)
-    console.log(hd)
-
-
-
-        var svg = d3.select("#piechart").append("div")
+        var svg = d3.select(".piechart").append("div")
 	                                .attr("class","canvas")
 	                                .classed("svg-container", true)
                                         .append("svg")
                                         .attr("preserveAspectRatio", "xMinYMin meet")
-                                        .attr("viewBox", "-300 -500 600 640")
+                                        .attr("viewBox", "-270 -500 540 550")
                                         .classed("svg-content-responsive", true);
 
         var arcEnter = svg.selectAll(".solidArc").append("div")
@@ -169,18 +198,15 @@ function make_pie(w, h, scale, simpleScale, data, type, unc,val,sAngle,eAngle,id
                           .classed("solidArc", true)
                           .classed("svg-container", true)
                           .attr("preserveAspectRatio", "xMinYMin meet")
-                          .attr("viewBox", "-200 -200 600 640")
+                          .attr("viewBox", "-200 -250 600 640")
                           .classed("svg-content-responsive", true);
 
-                          //.attr("transform", "translate(-"+w/20+","+h/2+")");
 
         arcEnter.append("path")
-                .attr("fill","rgb(120, 197, 120)") //function(d,i) {return simpleScale(1.0-unc[i]);})
+                .attr("fill","rgb(120, 197, 120)") 
                 .attr("id", function(d,i) {return id[i];})
                 .attr("stroke", "gray")
                 .attr("d", arc);
-
-
 
         var direct = "Left";
         if (direction===2) {
@@ -193,15 +219,14 @@ function make_pie(w, h, scale, simpleScale, data, type, unc,val,sAngle,eAngle,id
            var direct = "Right";
         }
           
-        console.log(direction);
+        //console.log(direction);
         svg.append("text")
           .attr("class", "direction")
           .attr("dy", ".35em")
-          .attr("transform","translate(-"+w/3+","+h/2.5+")")
+          .attr("x", -30)
+          .attr("y", -430)
           .text(direct);                            
   
-     
-    //   create_circles(h,w,r_state,collision);     
 
  }
 
@@ -234,6 +259,7 @@ function visualise_vsup(data,r_state,collision,direction,mutual_info,variation_r
         make_pie(w, h, scale, simpleScale, data, "simple",unc,val,sAngle,eAngle,id,label,direction);
         make_circles(h,w,r_state,collision);
         make_bar(h,w,mutual_info,variation_ratio,combined_confidence);
+        make_map();
 
     
       };

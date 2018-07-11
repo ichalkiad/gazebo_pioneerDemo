@@ -7,15 +7,42 @@ html, body {
     font: 10px sans-serif;}
 
 .container {
-    width:95%;
-
+    display: grid;
+    /*grid-template-columns: 50% auto 50%;*/
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows:  540px 540px; /*50% 50%;*/ 
+    grid-column-gap: 20px;
+    grid-row-gap: 20px;
+    justify-items: center;
+    align-items: center;
+    align-content: space-evenly;
 }
 
+.indicator {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+}
+.uncertainty {
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+}
+
+.map {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+}
+.piechart {
+  grid-column: 1/2;
+  grid-row: 2/3 ;
+}
+
+
+/*
 .column {
     float: left;
-    width: 100%;
-    padding: 5px;
-    height: 100%;
+    width: 960px;
+    padding: 0px;
+    height: 540px;
     text-align:left;
 }
 
@@ -25,25 +52,26 @@ html, body {
     clear: both;
 }
 
-@media screen and (max-width: 1280px) {
+@media screen and (max-width: 1920px) {
     .column {
         width: auto%;
 	height: auto%;
     }
 }
 
+*/
 
+.indicator { height:400px; width:540px; }
+.piechart { height:550px; width:540px; }
+#map {  height:400px; width:540px; }
+#uncertainty { height:550px; width:540px; }
 
-#indicator { background: #DDD; }
-#piechart { background: #DDD; }
-#map { background: #DDD; }
-#uncertainty { background: #DDD; }
-
-
+/*
 .svg-container {
     display: inline-block;
     position: relative;
-    width: 100%;
+    height: 100%;
+    width:100%;
     padding-bottom: 100%; 
     vertical-align: top;
     overflow: hidden;
@@ -54,7 +82,7 @@ html, body {
     top: 10px;
     left: 0;
 }
-
+*/
 
 .bar {
   fill: steelblue;
