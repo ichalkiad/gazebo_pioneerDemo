@@ -63,8 +63,8 @@ html, body {
 
 .indicator { height:400px; width:540px; }
 .piechart { height:550px; width:540px; }
-#map {  height:400px; width:540px; }
-#uncertainty { height:550px; width:540px; }
+.map {  height:400px; width:540px; }
+.uncertainty { height:550px; width:540px; }
 
 /*
 .svg-container {
