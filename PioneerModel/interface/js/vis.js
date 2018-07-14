@@ -16,7 +16,8 @@ function make_map() {
 }
 
 function make_bar(h,w,mutual_info,variation_ratio,combined_confidence){
-
+    console.log("bar");
+    console.log(combined_confidence);
     var data = [
 	{"Label":"Combined Confidence","Value":combined_confidence},
 	{"Label":"Variation Ratio","Value":variation_ratio},
@@ -83,19 +84,46 @@ function make_circles(h,w,r_state,collision) {
   
           var opacity = [1.0,0.2,0.2]
 
+
+          console.log("rstateindic");
+          console.log(r_state);
+          var robotState = "Inspecting..."
+          if (r_state==1){
+	     console.log("inindic");
+
+             robotState = "Inspecting..."
+             opacity[0] =  0.2
+             opacity[1] = 1.0
+             opacity[2] = 0.2
+          } else if (r_state==2){
+  	  console.log("inindic");
+             robotState = "I am confused..."
+             opacity[0] =  1.0
+             opacity[1] = 0.2
+             opacity[2] = 0.2
+	  }
+              if (collision){
+		  console.log("col");
+             robotState = "Collided!"
+             opacity[0] = 0.2
+             opacity[1] = 0.2
+             opacity[2] = 1.0
+          }
+
+    
           var jsonCircles = [
                        { "x_axis": -200, "y_axis": -150 , "radius": 30, "color" : "green", "opacity" :opacity[0] },
                        { "x_axis":  0, "y_axis": -150, "radius": 30, "color" : "yellow", "opacity" :opacity[1]},
                        { "x_axis": 200, "y_axis": -150, "radius": 30, "color" : "red", "opacity" :opacity[2]}];
 
 
-          var svg = d3.select(".indicator").append("div")
-	                                   .classed("svg-container", true)
-                                           .append("svg")
-    	                                   .attr("class","canv")
-                                           .attr("preserveAspectRatio", "xMinYMin meet")
-                                           .attr("viewBox", "-270 -450 540 400")
-                                           .classed("svg-content-responsive", true);
+          var svg = d3.select(".indicator")
+ 	              //.classed("svg-container", true)
+                      .append("svg")
+    	              .attr("class","canv")
+                      .attr("preserveAspectRatio", "xMinYMin meet")
+                      .attr("viewBox", "-270 -450 540 400");
+                      //.classed("svg-content-responsive", true);
 
     
           var circles = svg.selectAll("circle")
@@ -104,37 +132,17 @@ function make_circles(h,w,r_state,collision) {
                            .append("circle");
 
           var circleAttributes = circles
-                          .attr("class","canvas")
                           .attr("cx",       function (d)  { return d.x_axis;  })
                           .attr("cy",       function (d)  { return d.y_axis;  })
                           .attr("r",        function (d)  { return d.radius;  })
                           .style("fill",    function(d)   { return d.color;   })
                           .style("opacity", function(d)   { return d.opacity; });
 
-          console.log(r_state);
-          var robotState = "Inspecting..."
-          if (r_state===1){
-             var robotState = "Inspecting..."
-             opacity[0] =  0.2
-             opacity[1] = 1.0
-             opacity[2] = 0.2
-          } else if (r_state===2){
-             var robotState = "I am confused..."
-             opacity[0] =  1.0
-             opacity[1] = 0.2
-             opacity[2] = 0.2
-          } else if (r_state===3){
-             var robotState = "Collided!"
-             opacity[0] = 0.2
-             opacity[1] = 0.2
-             opacity[2] = 1.0
-          }
 
           svg.append("text")
-             .attr("class","canv")
              .attr("class", "state")
              .attr("dy", ".35em")
-             .attr('x' , -130)
+             .attr('x' , -80)
 	     .attr('y', -300)
 	     .text(robotState)
 
@@ -156,9 +164,10 @@ function make_circles(h,w,r_state,collision) {
       }
   
 
+function make_pie(w, h, data, unc,val,sAngle,eAngle,id,label,direction) {
 
-function make_pie(w, h, data, type, unc,val,sAngle,eAngle,id,label) {
-                 
+    console.log("pie");
+    console.log(direction);
         var pie = d3.pie()
                     .sort(null)
                     .value(function(d,i) { return unc[i]; } );
@@ -171,15 +180,15 @@ function make_pie(w, h, data, type, unc,val,sAngle,eAngle,id,label) {
                         .startAngle(function(d,i) {return sAngle[i];})
                         .endAngle(function(d,i) {return eAngle[i];});
 
-        var svg = d3.select(".piechart").append("div")
-	                                .classed("svg-container", true)
-                                        .append("svg")
-    	                                .attr("class","canv")
-                                        .attr("preserveAspectRatio", "xMinYMin meet")
-                                        .attr("viewBox", "-270 -500 540 550")
-                                        .classed("svg-content-responsive", true);
+        var svg = d3.select(".piechart")
+	            .classed("svg-container", true)
+                    .append("svg")
+    	            .attr("class","canv")
+                    .attr("preserveAspectRatio", "xMinYMin meet")
+                    .attr("viewBox", "-270 -500 540 550")
+                    .classed("svg-content-responsive", true);
 
-        var arcEnter = svg.selectAll(".solidArc").append("div")
+        var arcEnter = svg.selectAll(".solidArc")
                           .data(pie(unc))
                           .enter()
                           .append("g")
@@ -196,21 +205,28 @@ function make_pie(w, h, data, type, unc,val,sAngle,eAngle,id,label) {
                 .attr("stroke", "gray")
                 .attr("d", arc);
 
-        var direct = "Left";
-        if (direction===2) {
-           var direct = "Forward";
-        }
-        if (direction===0) {
-           var direct = "Slightly Right";
-        }
-        if (direction===1) {
-           var direct = "Right";
-        }
-          
+    var direct = "Left";
+
+    console.log("ww");
     console.log(direct);
     console.log(direction);
+       if (direction==2) {
+           direct = "Forward";
+	   console.log("in");
+        }
+        if (direction==0) {
+            direct = "Slightly Right";
+	    	   console.log("in");
+
+        }
+        if (direction==1) {
+            direct = "Right";
+	    	   console.log("in");
+
+        }
+
+    
         svg.append("text")
-           .attr("class","canv")
            .attr("class", "direction")
            .attr("dy", ".35em")
            .attr("x", -30)
@@ -221,15 +237,19 @@ function make_pie(w, h, data, type, unc,val,sAngle,eAngle,id,label) {
  }
 
 function visualise_vsup(data,r_state,collision,direction,mutual_info,variation_ratio,combined_confidence) {
-
+    console.log("vsup");
+    console.log(direction);
         var label  = data.map(function(d) { return d.label; });
         var id     = data.map(function(d) { return d.id; });
         var sAngle = data.map(function(d) { return d.startAngle; });
         var eAngle = data.map(function(d) { return d.endAngle; });
 
         var val = data.map(function(d) { return d.Direction;   });
-        var unc = data.map(function(d) { return d.Uncertainty; });
-  
+    var unc = data.map(function(d) { return d.Uncertainty; });
+    console.log("sup");
+    console.log(val);
+    console.log(unc);
+    console.log(direction);
         var vDom = d3.extent(data.map(function(d) { return d.Direction; }));
         var uDom = d3.extent(data.map(function(d) { return d.Uncertainty; }));
         var uDomScale = d3.extent(data.map(function(d) { return 1.0-d.Uncertainty; }));
@@ -238,11 +258,11 @@ function visualise_vsup(data,r_state,collision,direction,mutual_info,variation_r
         
         var w = 1280;
         var h = 840;
-        radius = Math.min(w, h) / 3;
+        radius = 200; //Math.min(w, h) / 3;
         innerRadius = 0.2*radius;
 
         d3.selectAll("svg.canv").remove();      
-        make_pie(w, h, data, "simple",unc,val,sAngle,eAngle,id,label,direction);
+        make_pie(w, h, data,unc,val,sAngle,eAngle,id,label,direction);
         make_circles(h,w,r_state,collision);
         make_bar(h,w,mutual_info,variation_ratio,combined_confidence);
         

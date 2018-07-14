@@ -4,10 +4,11 @@
 
 var msg = [];
 var data = [
-              {"Direction":3,"Uncertainty":0.45,"startAngle":-0.78,"endAngle":-0.26,"id":"L","label":"Left"},
-              {"Direction":2,"Uncertainty":0.15,"startAngle":-0.26,"endAngle":0.26,"id":"F","label":"Forward"},
               {"Direction":0,"Uncertainty":0.15,"startAngle":0.26,"endAngle":0.78,"id":"SR","label":"SL right"},
-              {"Direction":1,"Uncertainty":0.25,"startAngle":0.78,"endAngle":1.30,"id":"R","label":"Right"}
+              {"Direction":1,"Uncertainty":0.25,"startAngle":0.78,"endAngle":1.30,"id":"R","label":"Right"},
+              {"Direction":2,"Uncertainty":0.15,"startAngle":-0.26,"endAngle":0.26,"id":"F","label":"Forward"},
+              {"Direction":3,"Uncertainty":0.45,"startAngle":-0.78,"endAngle":-0.26,"id":"L","label":"Left"}
+              
   ];
 var opacity = [1.0,0.2,0.2];
 var r_state = 0
@@ -64,8 +65,6 @@ var poseTopic = new ROSLIB.Topic({
       // message from ROS, it forwards the message to roslibjs, which calls this
       // callback.
       poseTopic.subscribe(function(message) {
-	      console.log("pub");
-	      console.log(message);
 	      message_tmp = message.pose.pose
               message = message_tmp
               // Formats the pose for outputting.
@@ -110,10 +109,10 @@ gridClient.on('change', function() {
 function displayPoseMarker() {
         // Create a marker representing the robot.
         var robotMarker = new ROS2D.NavigationArrow({
-            size : 12,
+            size : 14,
             strokeSize : 1,
             fillColor : createjs.Graphics.getRGB(255, 128, 0, 0.66),
-            pulse : true
+            pulse : false
         });
         robotMarker.visible = false;
 
@@ -129,20 +128,18 @@ function displayPoseMarker() {
           throttle_rate : 100
         });
         poseListener.subscribe(function(pose) {
-               console.log("pub");
-               console.log(pose);
                message_tmp = pose.pose.pose
                pose = message_tmp
                // Orientate the marker based on the robot's pose.
-               robotMarker.x = pose.position.x;
-               robotMarker.y = -pose.position.y;
+            robotMarker.x = pose.position.x;
+            robotMarker.y = -pose.position.y;
                if (!initScaleSet) {
                   robotMarker.scaleX = 1.0 / viewer2D.scene.scaleX;
                   robotMarker.scaleY = 1.0 / viewer2D.scene.scaleY;
                   initScaleSet = true;
                }
-               robotMarker.rotation = viewer2D.scene.rosQuaternionToGlobalTheta(pose.orientation);
-               robotMarker.visible = true;
+            robotMarker.rotation = viewer2D.scene.rosQuaternionToGlobalTheta(pose.orientation);
+            robotMarker.visible = true;
         });
       }
 
@@ -171,26 +168,20 @@ listener.subscribe(function(message) {
        
         var collision = message.UncertainList[4]; //binary
         var r_state = message.UncertainList[8];
-        var direction = message.UncertainList[9];
+    var direction = message.UncertainList[9];
+    console.log(direction);
         var mutual_info = message.UncertainList[7];
         var variation_ratio = message.UncertainList[6];
         var combined_confidence = message.UncertainList[5];
 
     
-        var data = [
-              {"Direction":3,"Uncertainty":0.35,"startAngle":-0.78,"endAngle":-0.26,"id":"L","label":"Left"},
-              {"Direction":2,"Uncertainty":0.15,"startAngle":-0.26,"endAngle":0.26,"id":"F","label":"Forward"},
-              {"Direction":0,"Uncertainty":0.25,"startAngle":0.26,"endAngle":0.78,"id":"SR","label":"SL right"},
-              {"Direction":1,"Uncertainty":0.25,"startAngle":0.78,"endAngle":1.30,"id":"R","label":"Right"}
-        ];
-
-				       
+       			       
         if (msg !== undefined) {
            if (msg.length != 0) {
-            data[0].Uncertainty = msg[3];      
-            data[1].Uncertainty = msg[2];      
-            data[2].Uncertainty = msg[0];      
-            data[3].Uncertainty = msg[1];      
+            data[0].Uncertainty = msg[0];      
+            data[1].Uncertainty = msg[1];      
+            data[2].Uncertainty = msg[2];      
+            data[3].Uncertainty = msg[3];      
            }
         }
        
