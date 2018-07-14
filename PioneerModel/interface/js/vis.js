@@ -1,28 +1,18 @@
 function make_map() {
+ 
+    
+    var mmap = d3.select(".map")
+                .attr("style","opacity:1.")
+                .on("click", function(){
+	            //console.log("gfg");
+              	    var active  = map.active ? false : true ,
+		    newOpacity = active ? 0 : 1;
+		    //console.log(active)
+                    d3.select(this).style("opacity",newOpacity)
+                    map.active = active;
+		 });
 
-    var svg = d3.select(".map")
-                .append("svg")
-                .attr("width", 540)
-                .attr("height", 405)
-                .attr("id", "map");
-
-    var images = ["musicon.jpg","map.jpg"]
-    var imgs = svg.selectAll("image").data([0]);
-    imgs.enter()
-        .append("svg:image")
-        .attr("xlink:href", images[1])
-        .attr("x", "10")
-        .attr("y", "10")
-        .attr("width", "540")
-        .attr("height", "405")
-        .on("click", function(){
-                var images = ["musicon.jpg","map.jpg"]
-		var active  = map.active ? false : true ,
-		              newOpacity = active ? 0 : 1;
-            d3.select(this).attr("xlink:href", images[newOpacity])
-	    map.active = active;
-	});
-
+      
 }
 
 function make_bar(h,w,mutual_info,variation_ratio,combined_confidence){
@@ -46,15 +36,12 @@ function make_bar(h,w,mutual_info,variation_ratio,combined_confidence){
           
 
     var svg = d3.select(".uncertainty").append("svg")
+                .attr("class","canv")
 	        .attr("width", width + margin.left + margin.right)
 	        .attr("height", height + margin.top + margin.bottom)
 	        .append("g")
 	        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-/*    data.forEach(function(d) {
-       d.Value = +d.Value;
-    });
-*/
     x.domain([0, d3.max(data, function(d){ return d.Value; })])
     y.domain(data.map(function(d) { return d.Label; }));
 
@@ -103,26 +90,26 @@ function make_circles(h,w,r_state,collision) {
 
 
           var svg = d3.select(".indicator").append("div")
-	                                   .attr("class","canvas")
 	                                   .classed("svg-container", true)
                                            .append("svg")
+    	                                   .attr("class","canv")
                                            .attr("preserveAspectRatio", "xMinYMin meet")
                                            .attr("viewBox", "-270 -450 540 400")
                                            .classed("svg-content-responsive", true);
+
     
           var circles = svg.selectAll("circle")
                            .data(jsonCircles)
                            .enter()
                            .append("circle");
 
-  
-
           var circleAttributes = circles
-                       .attr("cx",       function (d)  { return d.x_axis;  })
-                       .attr("cy",       function (d)  { return d.y_axis;  })
-                       .attr("r",        function (d)  { return d.radius;  })
-                       .style("fill",    function(d)   { return d.color;   })
-                       .style("opacity", function(d)   { return d.opacity; });
+                          .attr("class","canvas")
+                          .attr("cx",       function (d)  { return d.x_axis;  })
+                          .attr("cy",       function (d)  { return d.y_axis;  })
+                          .attr("r",        function (d)  { return d.radius;  })
+                          .style("fill",    function(d)   { return d.color;   })
+                          .style("opacity", function(d)   { return d.opacity; });
 
           console.log(r_state);
           var robotState = "Inspecting..."
@@ -144,6 +131,7 @@ function make_circles(h,w,r_state,collision) {
           }
 
           svg.append("text")
+             .attr("class","canv")
              .attr("class", "state")
              .attr("dy", ".35em")
              .attr('x' , -130)
@@ -152,16 +140,16 @@ function make_circles(h,w,r_state,collision) {
 
 
           d3.select("text.state")
-           .transition()
-           .duration(3000)
-           .on("start", function repeat() {
+            .transition()
+            .duration(1000)
+            .on("start", function repeat() {
                      var t = d3.active(this)
-                     .style("opacity", 0)
-                     .text("Moving...")
-                     .transition(t)
-                     .style("opacity", 1)
-                     .text(robotState)
-                     .delay(3000)
+                               .style("opacity", 0)
+                               .text("Moving...")
+                               .transition(t)
+                               .style("opacity", 1)
+                               .text(robotState)
+                               .delay(2000)
             });
    
     
@@ -169,7 +157,7 @@ function make_circles(h,w,r_state,collision) {
   
 
 
-function make_pie(w, h, scale, simpleScale, data, type, unc,val,sAngle,eAngle,id,label) {
+function make_pie(w, h, data, type, unc,val,sAngle,eAngle,id,label) {
                  
         var pie = d3.pie()
                     .sort(null)
@@ -178,15 +166,15 @@ function make_pie(w, h, scale, simpleScale, data, type, unc,val,sAngle,eAngle,id
         var arc = d3.arc()
                         .innerRadius(innerRadius)
                         .outerRadius(function (d,i) { 
-                            return (radius - innerRadius) * unc[i]*2 + innerRadius; 
+                            return ((radius - innerRadius) * unc[i]*2 + innerRadius); 
                         })
                         .startAngle(function(d,i) {return sAngle[i];})
                         .endAngle(function(d,i) {return eAngle[i];});
 
         var svg = d3.select(".piechart").append("div")
-	                                .attr("class","canvas")
 	                                .classed("svg-container", true)
                                         .append("svg")
+    	                                .attr("class","canv")
                                         .attr("preserveAspectRatio", "xMinYMin meet")
                                         .attr("viewBox", "-270 -500 540 550")
                                         .classed("svg-content-responsive", true);
@@ -194,7 +182,7 @@ function make_pie(w, h, scale, simpleScale, data, type, unc,val,sAngle,eAngle,id
         var arcEnter = svg.selectAll(".solidArc").append("div")
                           .data(pie(unc))
                           .enter()
-	                  .append("g")
+                          .append("g")
                           .classed("solidArc", true)
                           .classed("svg-container", true)
                           .attr("preserveAspectRatio", "xMinYMin meet")
@@ -219,13 +207,15 @@ function make_pie(w, h, scale, simpleScale, data, type, unc,val,sAngle,eAngle,id
            var direct = "Right";
         }
           
-        //console.log(direction);
+    console.log(direct);
+    console.log(direction);
         svg.append("text")
-          .attr("class", "direction")
-          .attr("dy", ".35em")
-          .attr("x", -30)
-          .attr("y", -430)
-          .text(direct);                            
+           .attr("class","canv")
+           .attr("class", "direction")
+           .attr("dy", ".35em")
+           .attr("x", -30)
+           .attr("y", -430)
+           .text(direct);                            
   
 
  }
@@ -243,10 +233,6 @@ function visualise_vsup(data,r_state,collision,direction,mutual_info,variation_r
         var vDom = d3.extent(data.map(function(d) { return d.Direction; }));
         var uDom = d3.extent(data.map(function(d) { return d.Uncertainty; }));
         var uDomScale = d3.extent(data.map(function(d) { return 1.0-d.Uncertainty; }));
-        var quantization = vsup.quantization().branching(2).layers(2).valueDomain(vDom).uncertaintyDomain(uDomScale);
-        var scale = vsup.scale().quantize(quantization).range(d3.interpolateViridis);
-        var squareQuantization = vsup.squareQuantization().n(4).valueDomain(vDom).uncertaintyDomain(uDom);
-        var squareScale = vsup.scale().quantize(squareQuantization).range(d3.interpolateViridis);
         var simpleScale = d3.scaleQuantize().domain([0,1]).range(d3.quantize(d3.interpolateViridis, 5));
 
         
@@ -255,11 +241,11 @@ function visualise_vsup(data,r_state,collision,direction,mutual_info,variation_r
         radius = Math.min(w, h) / 3;
         innerRadius = 0.2*radius;
 
-        d3.selectAll("svg.canvas").remove();      
-        make_pie(w, h, scale, simpleScale, data, "simple",unc,val,sAngle,eAngle,id,label,direction);
+        d3.selectAll("svg.canv").remove();      
+        make_pie(w, h, data, "simple",unc,val,sAngle,eAngle,id,label,direction);
         make_circles(h,w,r_state,collision);
         make_bar(h,w,mutual_info,variation_ratio,combined_confidence);
-        make_map();
+        
 
     
       };
