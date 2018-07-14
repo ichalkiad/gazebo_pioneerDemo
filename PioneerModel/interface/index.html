@@ -3,20 +3,29 @@
 
 <head>
 <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1" />
-<script src="https://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
-<script type="text/javascript" src="https://static.robotwebtools.org/roslibjs/current/roslib.js"></script>
+<script src="js/jquery.js"></script>
+<script src="js/display.js"></script>
+<!--<script src="https://static.robotwebtools.org/EventEmitter2/current/eventemitter2.js"></script>
+    <script type="text/javascript" src="https://static.robotwebtools.org/roslibjs/current/roslib.js"></script>-->
+<script src="js/eventemitter2.js"></script>
+<script src="js/roslib.js"></script>
 <script src="https://d3js.org/d3.v5.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/vsup@latest"></script>
-</script>
+
 <link rel="stylesheet" type="text/css" href="css/style.css">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+
+<!-- ROS2DJS -->
+<!-- EaselJS is a dependency of ros2djs -->
+<script src="js/easeljs.js"></script>
+<!-- Ros2djs provides 2D scene support, including mapping and more -->
+<script src="js/ros2d.js"></script>
 
 <script src="js/vis.js"></script>
 <script src="js/ros_connect.js"></script>
 
 </head>
 
-<body>
+<body onload="init()" >
 
  
 <div class="container">
@@ -35,14 +44,15 @@
       </p>
    </div>
    
-  <div class="map"></div>
+  <div class="map" id="map"></div>
   <div class="uncertainty"></div>
   <div class="piechart"></div>
 
 </div>
- <script language="javascript">
+<script language="javascript">
    visualise_vsup(data,r_state,collision,direction,mutual_info,variation_ratio,combined_confidence);
-  </script>
+   make_map();
+ </script>
 
 </body>
 
