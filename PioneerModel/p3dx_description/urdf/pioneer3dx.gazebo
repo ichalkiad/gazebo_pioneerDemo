@@ -72,7 +72,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -93,7 +93,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -113,7 +113,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -133,7 +133,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -153,7 +153,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -173,7 +173,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -193,7 +193,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -213,7 +213,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -233,7 +233,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -253,7 +253,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -273,7 +273,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -293,7 +293,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -313,7 +313,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -333,7 +333,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -353,7 +353,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -373,7 +373,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -393,7 +393,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -413,7 +413,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -433,7 +433,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -453,7 +453,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -473,7 +473,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -493,7 +493,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -513,7 +513,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -533,7 +533,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
@@ -553,7 +553,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <ray>
 	<range>
 	  <min>0.2</min>
-	  <max>6</max>
+	  <max>3</max>
 	</range>
       </ray>      
       <plugin name="range_plugin" filename="libgazebo_ros_range.so">
