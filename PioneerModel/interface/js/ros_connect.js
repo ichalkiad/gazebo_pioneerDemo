@@ -85,8 +85,8 @@ var poseTopic = new ROSLIB.Topic({
 // The ROS2D.Viewer is a 2D scene manager with additional ROS functionality.
 var viewer2D = new ROS2D.Viewer({
         divID : 'map',
-        width : 450,
-        height : 350
+        width : 480,
+        height : 400
 });
 
 // Subscribes to the robot's OccupancyGrid, which is ROS representation of
@@ -109,7 +109,7 @@ gridClient.on('change', function() {
 function displayPoseMarker() {
         // Create a marker representing the robot.
         var robotMarker = new ROS2D.NavigationArrow({
-            size : 14,
+            size : 12,
             strokeSize : 1,
             fillColor : createjs.Graphics.getRGB(255, 128, 0, 0.66),
             pulse : false
@@ -131,14 +131,20 @@ function displayPoseMarker() {
                message_tmp = pose.pose.pose
                pose = message_tmp
                // Orientate the marker based on the robot's pose.
-            robotMarker.x = pose.position.x;
-            robotMarker.y = -pose.position.y;
+            robotMarker.x = -pose.position.y-0.8;
+            robotMarker.y = -pose.position.x;
+	    //console.log("marker")
+	    //console.log(robotMarker.x,robotMarker.y)
+    	    //console.log(robotMarker.scaleX,robotMarker.scaleY)
+
                if (!initScaleSet) {
                   robotMarker.scaleX = 1.0 / viewer2D.scene.scaleX;
                   robotMarker.scaleY = 1.0 / viewer2D.scene.scaleY;
                   initScaleSet = true;
                }
             robotMarker.rotation = viewer2D.scene.rosQuaternionToGlobalTheta(pose.orientation);
+   	    robotMarker.rotation = robotMarker.rotation + 271.25 ;
+	    //console.log(robotMarker.rotation)
             robotMarker.visible = true;
         });
       }
@@ -168,8 +174,8 @@ listener.subscribe(function(message) {
        
         var collision = message.UncertainList[4]; //binary
         var r_state = message.UncertainList[8];
-    var direction = message.UncertainList[9];
-    console.log(direction);
+        var direction = message.UncertainList[9];
+    //console.log(direction);
         var mutual_info = message.UncertainList[7];
         var variation_ratio = message.UncertainList[6];
         var combined_confidence = message.UncertainList[5];

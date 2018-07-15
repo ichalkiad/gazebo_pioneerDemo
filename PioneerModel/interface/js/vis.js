@@ -4,10 +4,8 @@ function make_map() {
     var mmap = d3.select(".map")
                 .attr("style","opacity:1.")
                 .on("click", function(){
-	            //console.log("gfg");
               	    var active  = map.active ? false : true ,
 		    newOpacity = active ? 0 : 1;
-		    //console.log(active)
                     d3.select(this).style("opacity",newOpacity)
                     map.active = active;
 		 });
@@ -17,14 +15,14 @@ function make_map() {
 
 function make_bar(h,w,mutual_info,variation_ratio,combined_confidence){
     console.log("bar");
-    console.log(combined_confidence);
+    console.log(mutual_info);
+    console.log(variation_ratio);
     var data = [
-	{"Label":"Combined Confidence","Value":combined_confidence},
-	{"Label":"Variation Ratio","Value":variation_ratio},
-        {"Label":"Mutual Information","Value":mutual_info}
+	{"Label":"Uncertainty in prediction","Value":variation_ratio},
+        {"Label":"Model confidence","Value":mutual_info}
         ]
 
-    var margin = {top: 50, right: 20, bottom: 30, left: 120},
+    var margin = {top: 125, right: 20, bottom: 30, left: 140},
 	width = 450 - margin.left - margin.right,
 	height = 500*2/3 - margin.top - margin.bottom;
 
@@ -59,14 +57,13 @@ function make_bar(h,w,mutual_info,variation_ratio,combined_confidence){
 	               })
        .on("mousemove", function(d) {
 	              var xPosition = d3.mouse(this)[0] ;
-            var yPosition = d3.mouse(this)[1] ;
-	    console.log(xPosition,yPosition)
-                     d3.select("#tooltip")
+                      var yPosition = d3.mouse(this)[1] ;
+	              d3.select("#tooltip")
   		       .style("left", xPosition + "px")
                        .style("top", yPosition + "px")
 		       .style("display", "inline-block")
                        .html((d.Label) + "<br>" +(d.Value));
-		     d3.select("#tooltip").classed("hidden", false);
+	              d3.select("#tooltip").classed("hidden", false);
         })
         .on("mouseout", function() {d3.select("#tooltip").classed("hidden", true);
 	});
@@ -85,25 +82,23 @@ function make_circles(h,w,r_state,collision) {
           var opacity = [1.0,0.2,0.2]
 
 
-          console.log("rstateindic");
-          console.log(r_state);
           var robotState = "Inspecting..."
           if (r_state==1){
-	     console.log("inindic");
+	     //console.log("inindic");
 
              robotState = "Inspecting..."
-             opacity[0] =  0.2
-             opacity[1] = 1.0
-             opacity[2] = 0.2
-          } else if (r_state==2){
-  	  console.log("inindic");
-             robotState = "I am confused..."
              opacity[0] =  1.0
              opacity[1] = 0.2
              opacity[2] = 0.2
+          } else if (r_state==2){
+  	  //console.log("inindic");
+             robotState = "I am confused..."
+             opacity[0] =  0.2
+             opacity[1] = 1.0
+             opacity[2] = 0.2
 	  }
-              if (collision){
-		  console.log("col");
+          if (collision){
+	//	  console.log("col");
              robotState = "Collided!"
              opacity[0] = 0.2
              opacity[1] = 0.2
@@ -138,36 +133,38 @@ function make_circles(h,w,r_state,collision) {
                           .style("fill",    function(d)   { return d.color;   })
                           .style("opacity", function(d)   { return d.opacity; });
 
-
-          svg.append("text")
-             .attr("class", "state")
-             .attr("dy", ".35em")
-             .attr('x' , -80)
-	     .attr('y', -300)
-	     .text(robotState)
-
-
-          d3.select("text.state")
-            .transition()
-            .duration(1000)
-            .on("start", function repeat() {
-                     var t = d3.active(this)
-                               .style("opacity", 0)
-                               .text("Moving...")
-                               .transition(t)
-                               .style("opacity", 1)
-                               .text(robotState)
-                               .delay(2000)
-            });
-   
+          var state = svg.append("text")
+                         .attr("class", "state")
+                         .attr("dy", ".35em")
+                         .attr('x' , -80)
+                         .attr('y', -300)
+                         .text(robotState);
+    
+    
+           
+         d3.select("text.state")
+             .transition()
+             .duration(3500)
+             .on("start", function repeat() {
+                   d3.active(this)
+                     .tween("text", function() {
+			 var textd = [robotState, "Moving..."];
+			 var format = d3.format(",d");
+			 var that = d3.select(this)
+                         return function(t) {console.log(textd[format(t)]); that.text(textd[format(t)]); };})
+                     .transition()
+		     .delay(1500)
+		     .on("start", repeat);
+           });
+      
     
       }
   
 
 function make_pie(w, h, data, unc,val,sAngle,eAngle,id,label,direction) {
 
-    console.log("pie");
-    console.log(direction);
+    //console.log("pie");
+    //console.log(direction);
         var pie = d3.pie()
                     .sort(null)
                     .value(function(d,i) { return unc[i]; } );
@@ -207,21 +204,18 @@ function make_pie(w, h, data, unc,val,sAngle,eAngle,id,label,direction) {
 
     var direct = "Left";
 
-    console.log("ww");
-    console.log(direct);
-    console.log(direction);
+    //console.log("ww");
+    //console.log(direct);
+    //console.log(direction);
        if (direction==2) {
            direct = "Forward";
-	   console.log("in");
         }
         if (direction==0) {
             direct = "Slightly Right";
-	    	   console.log("in");
 
         }
         if (direction==1) {
             direct = "Right";
-	    	   console.log("in");
 
         }
 
@@ -237,19 +231,18 @@ function make_pie(w, h, data, unc,val,sAngle,eAngle,id,label,direction) {
  }
 
 function visualise_vsup(data,r_state,collision,direction,mutual_info,variation_ratio,combined_confidence) {
-    console.log("vsup");
-    console.log(direction);
+    //console.log("vsup");
         var label  = data.map(function(d) { return d.label; });
         var id     = data.map(function(d) { return d.id; });
         var sAngle = data.map(function(d) { return d.startAngle; });
         var eAngle = data.map(function(d) { return d.endAngle; });
 
         var val = data.map(function(d) { return d.Direction;   });
-    var unc = data.map(function(d) { return d.Uncertainty; });
-    console.log("sup");
-    console.log(val);
-    console.log(unc);
-    console.log(direction);
+        var unc = data.map(function(d) { return d.Uncertainty; });
+    //console.log("sup");
+    //console.log(val);
+    //console.log(unc);
+    //console.log(direction);
         var vDom = d3.extent(data.map(function(d) { return d.Direction; }));
         var uDom = d3.extent(data.map(function(d) { return d.Uncertainty; }));
         var uDomScale = d3.extent(data.map(function(d) { return 1.0-d.Uncertainty; }));
