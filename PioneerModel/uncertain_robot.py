@@ -252,19 +252,23 @@ def uncertain_predict(model,X,K_test):
     for j in xrange(len(MC_pred)):
         variation_ratio[j] = 1 - ((mode_fx[j])[1])/float(K_test)
     variation_ratio_avg_VR = np.sum(variation_ratio)/float(len(MC_pred))
+    print("VR")
     print(variation_ratio_avg_VR)
        
     #Average predictive entropy over minibatch
     predictive_entropy = -1*np.sum(MC_means*np.log(MC_means),axis=-1)
     predictive_entropy_avg_H = np.sum(predictive_entropy)/float(len(MC_pred))
+    print("PE")
     print(predictive_entropy_avg_H)
         
     #Average mutual information over minibatch
     expected_entropy = np.sum(np.sum(MC_samples*np.log(MC_samples),axis=-1),axis=0)/float(K_test)
     mutual_information_avg_MI = predictive_entropy_avg_H + np.sum(expected_entropy)/float(len(MC_pred))
+    print("MI")
     print(mutual_information_avg_MI)
 
     combined_confidence = 1.0 - 1.5*((variation_ratio_avg_VR + mutual_information_avg_MI)/(1 + variation_ratio_avg_VR + mutual_information_avg_MI))
+    print("CC")
     print(combined_confidence)
 
     # ONLY as long as we predict for a single x
@@ -346,6 +350,7 @@ if __name__ == '__main__':
         print(np.linalg.norm(readIR-ir_last)/2.0)
         
         if np.linalg.norm(readIR-ir_last)/2.0>SIGNIFICANT_CHANGE:
+           print("Pub")
            pub.publish(uncertain_message)
    
         #update(MC_pred,bins,epistemic_uncertainty)
