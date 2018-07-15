@@ -325,7 +325,10 @@ if __name__ == '__main__':
 
 
         readIR = np.array([front,left])
-        scaled_range = readIR/float(np.linalg.norm(readIR))
+        scaled_range = np.divide(np.subtract(readIR,np.array([1.29612657 ,0.67692819])),np.array([0.39477931 ,0.10829069]))
+        print("scaled")
+        print(readIR)
+        print(scaled_range)
         MC_pred, majVoteProbab, combined_confidence, variation_ratio_avg_VR, mutual_information_avg_MI = uncertain_predict(model,scaled_range,K_test) 
 
         
